@@ -15,7 +15,7 @@
                     yylval = yytext;
                     return NUMBER;
                 }
-[a-zA-Z_][a-zA-Z0-9_!@#$%^*,.?/+-=~]* {
+[-a-zA-Z_][a-zA-Z0-9_!@#$%^*,.?/+-=~]* {
                     yylval = yytext;
                     return WORD;
                 }
