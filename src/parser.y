@@ -1,0 +1,116 @@
+%{
+    #include <iostream>
+    extern int yylineno;
+    extern int yylex();
+    void yyerror(char *s) {
+      std::cerr << s << ", line " << yylineno << std::endl;
+      exit(1);
+    }
+    #define YYSTYPE std::string
+%}
+
+%token WORD NUMBER NEWLINE
+
+%%
+
+PROGRAM:
+    LINEBREAK COMPLETE_COMMANDS LINEBREAK
+|   LINEBREAK
+;
+
+COMPLETE_COMMANDS:
+    COMPLETE_COMMANDS LINEBREAK COMPLETE_COMMAND
+|   COMPLETE_COMMAND
+;
+
+COMPLETE_COMMAND:
+    LIST ';'
+|   LIST
+;
+
+LIST:
+    PIPELINE_COMMAND
+|   LIST '&&' LINEBREAK LIST
+|   LIST '||' LINEBREAK LIST
+;
+
+LINEBREAK:
+    NEWLINE
+|
+;
+
+WORD_LIST:  
+    WORD
+|   WORD_LIST WORD
+;
+
+ASSIGNMENT_WORD: 
+    WORD '=' WORD
+;
+
+REDIRECTION:
+    '>' WORD
+|   '<' WORD
+|   NUMBER '>' WORD
+|   NUMBER '<' WORD
+;
+
+REDIRECTION_LIST:
+    REDIRECTION
+|   REDIRECTION_LIST REDIRECTION
+;
+
+PIPELINE_COMMAND:
+    PIPELINE
+|   '!' PIPELINE
+;
+
+PIPELINE:
+    COMMAND
+|   PIPELINE '|' NEWLINE_LIST PIPELINE
+;
+
+SIMPLE_COMMAND_ELEMENT:
+    WORD
+|   ASSIGNMENT_WORD
+|   REDIRECTION
+;
+
+SIMPLE_COMMAND: 
+    SIMPLE_COMMAND_ELEMENT
+|   SIMPLE_COMMAND SIMPLE_COMMAND_ELEMENT
+;
+
+COMMAND:
+    SIMPLE_COMMAND
+|   COMPOUND_COMMAND
+|   COMPOUND_COMMAND REDIRECTION_LIST
+;
+
+COMPOUND_COMMAND:
+    SUBSHELL
+|   FOR_COMMAND
+|   IF_COMMAND
+|   WHILE_COMMAND
+;
+
+SUBSHELL:
+    '(' COMPOUND_LIST ')'
+;
+
+
+IF_COMMAND:
+    'if' COMPOUND_LIST 'then' COMPOUND_LIST 'fi'
+|   'if' COMPOUND_LIST 'then' COMPOUND_LIST 'else' COMPOUND_LIST 'fi'
+|   'if' COMPOUND_LIST 'then' COMPOUND_LIST ELIF_CLAUSE 'fi'
+;
+
+ELIF_CLAUSE:
+    'elif' COMPOUND_LIST 'then' COMPOUND_LIST
+|   'elif' COMPOUND_LIST 'then' COMPOUND_LIST 'else' COMPOUND_LIST
+|   'elif' COMPOUND_LIST 'then' COMPOUND_LIST ELIF_CLAUSE
+;
+
+
+%%
+int main() { return yyparse(); }
