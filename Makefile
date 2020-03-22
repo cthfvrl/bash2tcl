@@ -12,13 +12,13 @@ build:
 	g++ -O3 $(FLAGS) $(FILES) -o $(OUT)
 
 debug:
-	flex src/scanner.l 
-	bison -d src/parser.y
-	g++ -g -no-pie $(FLAGS) $(FILES) -o $(OUT)	
+	flex -d src/scanner.l 
+	bison -dtv src/parser.y
+	g++ -O3 $(FLAGS) $(FILES) -o $(OUT)	
 
 test:
-	echo test/* | xargs -n 1 ./$(OUT) 
+	for file in test/*; do ./$(OUT) < $$file; done
 
 clean:
-	rm $(FILES) parser.tab.h
+	rm $(FILES) parser.tab.h parser.output
 	rm $(OUT)

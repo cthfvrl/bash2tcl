@@ -1,5 +1,6 @@
 %{
     #include <string>
+    #include <iostream>
     #define YYSTYPE std::string
     #include "parser.tab.h"
     void yyerror(char *s);
@@ -12,15 +13,15 @@
 
 [0-9]+          { 
                     yylval = yytext;
-                    return NUM;
+                    return NUMBER;
                 }
-[a-zA-Z_][a-zA-Z0-9_]* {
+[a-zA-Z_][a-zA-Z0-9_!@#$%^*,.?/+-=~]* {
                     yylval = yytext;
                     return WORD;
                 }
-[ \t\r]         ; // whitespace
+[ \t\r]         ; // ignore whitespaces
 [\n]+           {
-                    return NEWLINE;
+                    return NEWLINES;
                 }
 
 %%
