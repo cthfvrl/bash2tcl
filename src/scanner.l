@@ -15,7 +15,26 @@
                     yylval = yytext;
                     return NUMBER;
                 }
-[-a-zA-Z_][a-zA-Z0-9_!@#$%^*,.?/+-=~]* {
+=               return '=';
+;               return ';';
+\(              return '(';
+\)              return ')';
+[<]             return '<';
+>               return '>';
+!               return '!';
+&&              return AND;
+\|\|            return OR; 
+for             return FOR;
+in              return IN;
+if              return IF;
+fi              return FI;
+then            return THEN;
+else            return ELSE;
+elif            return ELIF;
+while           return WHILE;
+do              return DO;
+done            return DONE;
+[-a-zA-Z_][a-zA-Z0-9_!@#$%^*,.?/+\-~]* {
                     yylval = yytext;
                     return WORD;
                 }

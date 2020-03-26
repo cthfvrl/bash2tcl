@@ -9,7 +9,8 @@
     #define YYSTYPE std::string
 %}
 
-%token WORD NUMBER NEWLINES
+%token WORD NUMBER NEWLINES 
+%token AND OR FOR IN IF FI THEN ELSE ELIF WHILE DO DONE
 
 %%
 
@@ -37,28 +38,29 @@ SUBSHELL:
 ;
 
 FOR_CLAUSE:
-    "for" WORD "in" WORD_LIST ';' "do" LIST ';' "done"
+    FOR WORD IN WORD_LIST ';' DO LIST ';' DONE
 ;
 
 IF_CLAUSE:
-    "if" LIST ';' "then" LIST ';' "fi"
-|   "if" LIST ';' "then" LIST ';' ELSE_CLAUSE "fi"
+    IF LIST ';' THEN LIST ';' FI
+|   IF LIST ';' THEN LIST ';' ELSE_CLAUSE FI
 ;
 
 ELSE_CLAUSE:
-    "else" LIST ';'
-|   "elif" LIST ';' "then" LIST ';'
-|   "elif" LIST ';' "then" LIST ';' ELSE_CLAUSE
+    ELSE LIST ';'
+|   ELIF LIST ';' THEN LIST ';'
+|   ELIF LIST ';' THEN LIST ';' ELSE_CLAUSE
 ;
 
 WHILE_CLAUSE:
-    "while" LIST ';' "do" LIST ';' "done";
+    WHILE LIST ';' DO LIST ';' DONE
+;
 
 LIST:
     PIPELINE
 |   LIST ';' PIPELINE
-|   LIST "&&" PIPELINE
-|   LIST "||" PIPELINE
+|   LIST AND PIPELINE
+|   LIST OR PIPELINE
 ;
 
 PIPELINE:
@@ -75,6 +77,7 @@ SIMPLE_COMMAND:
     ASSIGNMENT_LIST WORD_LIST REDIRECTION_LIST
 |   WORD_LIST REDIRECTION_LIST
 |   ASSIGNMENT_LIST WORD_LIST
+|   ASSIGNMENT_LIST
 |   WORD_LIST
 ;
 
