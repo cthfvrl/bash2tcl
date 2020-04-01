@@ -1,0 +1,1 @@
+A=Hello; echo $A

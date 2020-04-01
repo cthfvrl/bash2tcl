@@ -17,10 +17,15 @@
                 }
 =               return '=';
 ;               return ';';
+\(\(            return BR2_OPEN;
+\)\)            return BR2_CLOSE;
+$\(\(           return ARITHM_OPEN;
 \(              return '(';
 \)              return ')';
 [<]             return '<';
 >               return '>';
+[<]=            return LEQ;
+>=              return GEQ;
 !               return '!';
 &&              return AND;
 \|\|            return OR; 

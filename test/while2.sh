@@ -1,0 +1,1 @@
+while echo a; do echo b; done
