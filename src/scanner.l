@@ -5,8 +5,8 @@
     #define YYSTYPE std::string
     #include "parser.tab.h"
     void yyerror(std::string_view s);
-    int brace_count = 0;
-
+    int arithm_brace_count = 0;
+    int command_brace_count = 0;
 %}
 
 %option yylineno
@@ -14,6 +14,7 @@
 
 %x ARITHM_EXPR ARITHM_COMMAND
 %x STR_EXACT STR
+%x COMMAND_SUBST COMMAND_SUBST_BRACE
 
 %%
 
@@ -29,44 +30,67 @@
                     BEGIN(INITIAL);
                     return WORD;
                 }
-<STR_EXACT>.|\n {
-                    yymore();
-                }
+<STR_EXACT>.|\n yymore();
 \"              BEGIN(STR);
 <STR>\"         {
                     yylval = std::string(yytext, yytext + strlen(yytext - 1));
                     BEGIN(INITIAL);
                     return WORD;
                 }
-<STR>.|\n       {
-                    yymore();
+<STR>.|\n       yymore();
+`               BEGIN(COMMAND_SUBST);
+<COMMAND_SUBST>` {
+                    yylval = std::string(yytext, yytext + strlen(yytext - 1));
+                    BEGIN(INITIAL);
+                    return COMMAND;
+                }
+<COMMAND_SUBST>.|\n yymore();
+$\(             {
+                    if (command_brace_count)
+                        yyerror("Unsupported nested command substitution");
+                    BEGIN(COMMAND_SUBST_BRACE);
+                    command_brace_count = 1;
+                }
+<COMMAND_SUBST_BRACE>.|\n {
+                    char c = yytext[strlen(yytext) - 1];
+                    if(c == '(')
+                        ++command_brace_count;
+                    else if(c == ')')
+                        --command_brace_count;
+                    if(!command_brace_count) {
+                        yylval = std::string(yytext, yytext + strlen(yytext - 1));
+                        BEGIN(INITIAL);
+                        return COMMAND;
+                    }
                 }
 \(\(            {
-                    if (brace_count)
+                    if (arithm_brace_count)
                         yyerror("Unsupported nested arithmetic command");
                     BEGIN(ARITHM_COMMAND);
+                    arithm_brace_count = 2;
                 }
 $\(\(           {
-                    if (brace_count)
+                    if (arithm_brace_count)
                         yyerror("Unsupported nested arithmetic expression");
                     BEGIN(ARITHM_EXPR);
+                    arithm_brace_count = 2;
                 }
 <ARITHM_COMMAND>. {
                 #define ARITHMETIC(token) { \
                     char c = yytext[strlen(yytext) - 1]; \
                     if(c == '(') \
-                        ++brace_count; \
-                    else if(c == ')') \
-                        --brace_count; \
-                        if(brace_count == -2 && yytext[strlen(yytext) - 2] == ')') { \
-                            brace_count = 0; \
+                        ++arithm_brace_count; \
+                    else if(c == ')') {\
+                        --arithm_brace_count; \
+                        if(!arithm_brace_count && yytext[strlen(yytext) - 2] == ')') { \
                             yylval = std::string(yytext, yytext + strlen(yytext - 2)); \
                             BEGIN(INITIAL); \
                             return token; \
                         } \
-                        else if (brace_count <= -2) { \
+                        else if (arithm_brace_count <= 0) { \
                             yyerror("Incorrect bracket sequence"); \
                         } \
+                    } \
                     yymore(); \
                 }
                 ARITHMETIC(ARITHMETIC_COMMAND)
