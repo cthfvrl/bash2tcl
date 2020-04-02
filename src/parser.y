@@ -26,6 +26,7 @@ LIST:
 |   LIST AND PIPELINE
 |   LIST OR PIPELINE
 |   '(' LIST ')'
+|   LIST ';'
 ;
 
 PIPELINE:

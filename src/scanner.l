@@ -13,6 +13,7 @@
 %option noyywrap
 
 %x ARITHM_EXPR ARITHM_COMMAND
+%x STR_EXACT STR
 
 %%
 
@@ -22,6 +23,24 @@
                 }
 =               return '=';
 ;[ \t\r\n;]*    return ';';
+'               BEGIN(STR_EXACT);
+<STR_EXACT>'    {
+                    yylval = std::string(yytext, yytext + strlen(yytext - 1));
+                    BEGIN(INITIAL);
+                    return WORD;
+                }
+<STR_EXACT>.|\n {
+                    yymore();
+                }
+\"              BEGIN(STR);
+<STR>\"         {
+                    yylval = std::string(yytext, yytext + strlen(yytext - 1));
+                    BEGIN(INITIAL);
+                    return WORD;
+                }
+<STR>.|\n       {
+                    yymore();
+                }
 \(\(            {
                     if (brace_count)
                         yyerror("Unsupported nested arithmetic command");
@@ -72,7 +91,7 @@ elif            return ELIF;
 while           return WHILE;
 do              return DO;
 done            return DONE;
-$?[-a-zA-Z_][a-zA-Z0-9_!@#$%^*,.?/+\-~]* {
+[-$*a-zA-Z_][a-zA-Z0-9_!@#$%^*,.?/+\-~]* {
                     yylval = yytext;
                     return WORD;
                 }
