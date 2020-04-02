@@ -1,3 +1,4 @@
+#!/usr/bin/bash
 SUM=0; 
 I=0; 
 while ((I<=N)); 

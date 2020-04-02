@@ -72,12 +72,13 @@ elif            return ELIF;
 while           return WHILE;
 do              return DO;
 done            return DONE;
-[-a-zA-Z_][a-zA-Z0-9_!@#$%^*,.?/+\-~]* {
+$?[-a-zA-Z_][a-zA-Z0-9_!@#$%^*,.?/+\-~]* {
                     yylval = yytext;
                     return WORD;
                 }
 [ \t\r]         ; // ignore whitespaces
 [\n]+           return ';';
+#.*[\n]*        ; // ignore comments
 
 %%
 
