@@ -1,13 +1,18 @@
 %{
     #include <string>
     #include <iostream>
+    #include <stack>
     #define YYSTYPE std::string
     #include "parser.tab.h"
-    void yyerror(char *s);
+    void yyerror(std::string_view s);
+    int brace_count = 0;
+
 %}
 
 %option yylineno
 %option noyywrap
+
+%x ARITHM_EXPR ARITHM_COMMAND
 
 %%
 
@@ -16,10 +21,38 @@
                     return NUMBER;
                 }
 =               return '=';
-;               return ';';
-\(\(            return BR2_OPEN;
-\)\)            return BR2_CLOSE;
-$\(\(           return ARITHM_OPEN;
+;[ \t\r\n;]*    return ';';
+\(\(            {
+                    if (brace_count)
+                        yyerror("Unsupported nested arithmetic command");
+                    BEGIN(ARITHM_COMMAND);
+                }
+$\(\(           {
+                    if (brace_count)
+                        yyerror("Unsupported nested arithmetic expression");
+                    BEGIN(ARITHM_EXPR);
+                }
+<ARITHM_COMMAND>. {
+                #define ARITHMETIC(token) { \
+                    char c = yytext[strlen(yytext) - 1]; \
+                    if(c == '(') \
+                        ++brace_count; \
+                    else if(c == ')') \
+                        --brace_count; \
+                        if(brace_count == -2 && yytext[strlen(yytext) - 2] == ')') { \
+                            brace_count = 0; \
+                            yylval = std::string(yytext, yytext + strlen(yytext - 2)); \
+                            BEGIN(INITIAL); \
+                            return token; \
+                        } \
+                        else if (brace_count <= -2) { \
+                            yyerror("Incorrect bracket sequence"); \
+                        } \
+                    yymore(); \
+                }
+                ARITHMETIC(ARITHMETIC_COMMAND)
+                }
+<ARITHM_EXPR>.  ARITHMETIC(ARITHMETIC_EXPR)
 \(              return '(';
 \)              return ')';
 [<]             return '<';
@@ -44,8 +77,8 @@ done            return DONE;
                     return WORD;
                 }
 [ \t\r]         ; // ignore whitespaces
-[\n]+           {
-                    return NEWLINES;
-                }
+[\n]+           return ';';
 
 %%
+
+    
