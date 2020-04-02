@@ -17,7 +17,7 @@ debug:
 	g++ -O3 $(FLAGS) $(FILES) -o $(OUT)	
 
 test:
-	for file in test/*; do ./$(OUT) < $$file; done
+	for file in test/*; do echo $$file; ./$(OUT) < $$file; done
 
 clean:
 	rm $(FILES) parser.tab.h parser.output
