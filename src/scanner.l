@@ -2,12 +2,11 @@
     #include <string>
     #include <iostream>
     #include <stack>
-    #define YYSTYPE std::string
+    #include "src/element.hpp"
     #include "parser.tab.h"
     void yyerror(std::string_view s);
     int arithm_brace_count = 0;
     std::stack<int> command_brace_count;
-
 %}
 
 %option yylineno
@@ -20,21 +19,21 @@
 %%
 
 [0-9]+          { 
-                    yylval = yytext;
+                    yylval.string = yytext;
                     return NUMBER;
                 }
 =               return '=';
 ;[ \t\r\n;]*    return ';';
 '               BEGIN(STR_EXACT);
 <STR_EXACT>'    {
-                    yylval = std::string(yytext, yytext + strlen(yytext - 1));
+                    yylval.string = std::string(yytext, yytext + strlen(yytext - 1));
                     BEGIN(INITIAL);
                     return WORD;
                 }
 <STR_EXACT>.|\n yymore();
 \"              BEGIN(STR);
 <STR>\"         {
-                    yylval = std::string(yytext, yytext + strlen(yytext - 1));
+                    yylval.string = std::string(yytext, yytext + strlen(yytext - 1));
                     BEGIN(INITIAL);
                     return WORD;
                 }
@@ -89,7 +88,7 @@ $\(\(           {
                     else if(c == ')') {\
                         --arithm_brace_count; \
                         if(!arithm_brace_count && yytext[strlen(yytext) - 2] == ')') { \
-                            yylval = std::string(yytext, yytext + strlen(yytext - 2)); \
+                            yylval.string = std::string(yytext, yytext + strlen(yytext - 2)); \
                             BEGIN(INITIAL); \
                             return token; \
                         } \
@@ -122,7 +121,7 @@ while           return WHILE;
 do              return DO;
 done            return DONE;
 [-$*a-zA-Z_][a-zA-Z0-9_!@#$%^*,.?/+\-~]* {
-                    yylval = yytext;
+                    yylval.string = yytext;
                     return WORD;
                 }
 [ \t\r]         ; // ignore whitespaces

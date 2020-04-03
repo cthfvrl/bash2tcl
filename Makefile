@@ -1,4 +1,4 @@
-FILES:=lex.yy.c parser.tab.c
+FILES:=lex.yy.c parser.tab.c src/*.cpp
 FLAGS:=-std=c++17
 OUT:=bash2tcl
 
@@ -20,5 +20,5 @@ test:
 	for file in test/*; do echo $$file; ./$(OUT) < $$file; done
 
 clean:
-	rm $(FILES) parser.tab.h parser.output
+	rm lex.yy.c parser.tab.c parser.tab.h parser.output
 	rm $(OUT)

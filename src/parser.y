@@ -1,24 +1,30 @@
 %{
     #include <iostream>
+    #include "src/element.hpp"
     extern int yylineno;
     int yylex();
     void yyerror(std::string_view s) {
       std::cerr << s << ", line " << yylineno << std::endl;
       exit(1);
     }
-    #define YYSTYPE std::string
 %}
 
-%token WORD NUMBER NEWLINES 
+%token WORD NUMBER 
 %token ARITHMETIC_EXPR ARITHMETIC_COMMAND
 %token LEQ GEQ AND OR
 %token FOR IN IF FI THEN ELSE ELIF WHILE DO DONE
 %token COMMAND_SUBST_OPEN COMMAND_SUBST_CLOSE
 
+%type<string> WORD NUMBER
+%type<element> LIST PIPELINE PIPELINE_SEQUENCE COMPOUND_COMMAND 
+%type<element> FOR_CLAUSE IF_CLAUSE ELSE_CLAUSE WHILE_CLAUSE SIMPLE_COMMAND
+%type<element> COMMAND_SUBSTITUTION ASSIGNMENT_LIST ASSIGNMENT WORD_LIST REDIRECTION_LIST REDIRECTION
+%type<string> ARITHMETIC_EXPR ARITHMETIC_COMMAND
+
 %%
 
 PROGRAM:
-    LIST
+    LIST                                            //{ $1->print(); delete $1; }
 ;
 
 LIST:
