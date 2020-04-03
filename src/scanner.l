@@ -6,7 +6,8 @@
     #include "parser.tab.h"
     void yyerror(std::string_view s);
     int arithm_brace_count = 0;
-    int command_brace_count = 0;
+    std::stack<int> command_brace_count;
+
 %}
 
 %option yylineno
@@ -14,7 +15,7 @@
 
 %x ARITHM_EXPR ARITHM_COMMAND
 %x STR_EXACT STR
-%x COMMAND_SUBST COMMAND_SUBST_BRACE
+%s COMMAND_SUBST COMMAND_SUBST_BRACE
 
 %%
 
@@ -38,29 +39,34 @@
                     return WORD;
                 }
 <STR>.|\n       yymore();
-`               BEGIN(COMMAND_SUBST);
 <COMMAND_SUBST>` {
-                    yylval = std::string(yytext, yytext + strlen(yytext - 1));
-                    BEGIN(INITIAL);
-                    return COMMAND;
-                }
-<COMMAND_SUBST>.|\n yymore();
-$\(             {
-                    if (command_brace_count)
-                        yyerror("Unsupported nested command substitution");
-                    BEGIN(COMMAND_SUBST_BRACE);
-                    command_brace_count = 1;
-                }
-<COMMAND_SUBST_BRACE>.|\n {
-                    char c = yytext[strlen(yytext) - 1];
-                    if(c == '(')
-                        ++command_brace_count;
-                    else if(c == ')')
-                        --command_brace_count;
-                    if(!command_brace_count) {
-                        yylval = std::string(yytext, yytext + strlen(yytext - 1));
+                    if(!command_brace_count.empty())
+                        BEGIN(COMMAND_SUBST_BRACE);
+                    else
                         BEGIN(INITIAL);
-                        return COMMAND;
+                    return COMMAND_SUBST_CLOSE;
+                }
+`               {
+                    BEGIN(COMMAND_SUBST);
+                    return COMMAND_SUBST_OPEN;
+                }
+$\(             {
+                    BEGIN(COMMAND_SUBST_BRACE);
+                    command_brace_count.push(1);
+                    return COMMAND_SUBST_OPEN;
+                }
+<COMMAND_SUBST_BRACE>\( {
+                    ++command_brace_count.top();
+                }
+<COMMAND_SUBST_BRACE>\) {
+                    --command_brace_count.top();
+                    if(!command_brace_count.top()) {
+                        command_brace_count.pop();
+                        if(!command_brace_count.empty())
+                            BEGIN(COMMAND_SUBST_BRACE);
+                        else
+                            BEGIN(INITIAL);
+                        return COMMAND_SUBST_CLOSE;
                     }
                 }
 \(\(            {
