@@ -18,7 +18,7 @@
 %type<string> WORD NUMBER
 %type<wordlist> WORD_LIST
 %type<list> LIST
-%type<pipeline> PIPELINE PIPELINE_SEQUENCE
+%type<pipeline> PIPELINE
 %type<element> COMPOUND_COMMAND 
 %type<command> SIMPLE_COMMAND
 %type<element> FOR_CLAUSE IF_CLAUSE ELSE_CLAUSE WHILE_CLAUSE
@@ -41,13 +41,8 @@ LIST:
 ;
 
 PIPELINE:
-    PIPELINE_SEQUENCE                               { $$ = $1; }
-|   '!' PIPELINE_SEQUENCE                           { $$ = $2; $$->invert(); }
-;
-
-PIPELINE_SEQUENCE:
     COMPOUND_COMMAND                                { $$ = new Pipeline($1); }
-|   PIPELINE_SEQUENCE '|' COMPOUND_COMMAND          { $$ = $1; $$->add($3); }
+|   PIPELINE '|' COMPOUND_COMMAND                   { $$ = $1; $$->add($3); }
 ;
 
 COMPOUND_COMMAND:
