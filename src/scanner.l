@@ -2,7 +2,7 @@
     #include <string>
     #include <iostream>
     #include <stack>
-    #include "src/element.hpp"
+    #include "src/types.hpp"
     #include "parser.tab.h"
     void yyerror(std::string_view s);
     int arithm_brace_count = 0;
@@ -19,21 +19,24 @@
 %%
 
 [0-9]+          { 
-                    yylval.string = yytext;
+                    yylval.string = new String(yytext);
                     return NUMBER;
                 }
 =               return '=';
 ;[ \t\r\n;]*    return ';';
 '               BEGIN(STR_EXACT);
 <STR_EXACT>'    {
-                    yylval.string = std::string(yytext, yytext + strlen(yytext - 1));
+                    yylval.string = new String(std::string(yytext, yytext + strlen(yytext) - 1));
                     BEGIN(INITIAL);
                     return WORD;
                 }
 <STR_EXACT>.|\n yymore();
-\"              BEGIN(STR);
+\"              {
+                    BEGIN(STR);
+                    yymore();
+                }
 <STR>\"         {
-                    yylval.string = std::string(yytext, yytext + strlen(yytext - 1));
+                    yylval.string = new String(yytext);
                     BEGIN(INITIAL);
                     return WORD;
                 }
@@ -88,7 +91,7 @@ $\(\(           {
                     else if(c == ')') {\
                         --arithm_brace_count; \
                         if(!arithm_brace_count && yytext[strlen(yytext) - 2] == ')') { \
-                            yylval.string = std::string(yytext, yytext + strlen(yytext - 2)); \
+                            yylval.string = new String(std::string(yytext, yytext + strlen(yytext) - 2)); \
                             BEGIN(INITIAL); \
                             return token; \
                         } \
@@ -121,7 +124,7 @@ while           return WHILE;
 do              return DO;
 done            return DONE;
 [-$*a-zA-Z_][a-zA-Z0-9_!@#$%^*,.?/+\-~]* {
-                    yylval.string = yytext;
+                    yylval.string = new String(yytext);
                     return WORD;
                 }
 [ \t\r]         ; // ignore whitespaces

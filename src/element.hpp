@@ -1,16 +1,11 @@
 #pragma once
-#include <string>
+#include <cstddef>
 
 class Element {
-protected:
-    Element();
+public: // Replace with protected later
+    Element() = default;
 
 public:
-    void print();
+    virtual void print(size_t indent = 0) {}
+    virtual ~Element() = default;
 };
-
-typedef struct {
-    std::string string;
-    Element* element;
-} DATA;
-#define YYSTYPE DATA

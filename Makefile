@@ -14,7 +14,7 @@ build:
 debug:
 	flex -d src/scanner.l 
 	bison -dtv src/parser.y
-	g++ -O3 $(FLAGS) $(FILES) -o $(OUT)	
+	g++ -g -no-pie $(FLAGS) $(FILES) -o $(OUT)	
 
 test:
 	for file in test/*; do echo $$file; ./$(OUT) < $$file; done

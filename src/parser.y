@@ -1,6 +1,6 @@
 %{
     #include <iostream>
-    #include "src/element.hpp"
+    #include "src/types.hpp"
     extern int yylineno;
     int yylex();
     void yyerror(std::string_view s) {
@@ -16,38 +16,42 @@
 %token COMMAND_SUBST_OPEN COMMAND_SUBST_CLOSE
 
 %type<string> WORD NUMBER
-%type<element> LIST PIPELINE PIPELINE_SEQUENCE COMPOUND_COMMAND 
-%type<element> FOR_CLAUSE IF_CLAUSE ELSE_CLAUSE WHILE_CLAUSE SIMPLE_COMMAND
-%type<element> COMMAND_SUBSTITUTION ASSIGNMENT_LIST ASSIGNMENT WORD_LIST REDIRECTION_LIST REDIRECTION
+%type<wordlist> WORD_LIST
+%type<list> LIST
+%type<pipeline> PIPELINE PIPELINE_SEQUENCE
+%type<element> COMPOUND_COMMAND 
+%type<command> SIMPLE_COMMAND
+%type<element> FOR_CLAUSE IF_CLAUSE ELSE_CLAUSE WHILE_CLAUSE
+%type<element> COMMAND_SUBSTITUTION ASSIGNMENT_LIST ASSIGNMENT REDIRECTION_LIST REDIRECTION
 %type<string> ARITHMETIC_EXPR ARITHMETIC_COMMAND
 
 %%
 
 PROGRAM:
-    LIST                                            //{ $1->print(); delete $1; }
+    LIST                                            { $1->print(); delete $1; }
 ;
 
 LIST:
-    PIPELINE
-|   LIST ';' PIPELINE
+    PIPELINE                                        { $$ = new List($1);  }
+|   LIST ';' PIPELINE                               { $$ = $1; $$->add($3); }
 |   LIST AND PIPELINE
 |   LIST OR PIPELINE
 |   '(' LIST ')'
-|   LIST ';'
+|   LIST ';'                                        { $$ = $1; }
 ;
 
 PIPELINE:
-    PIPELINE_SEQUENCE
-|   '!' PIPELINE_SEQUENCE
+    PIPELINE_SEQUENCE                               { $$ = $1; }
+|   '!' PIPELINE_SEQUENCE                           { $$ = $2; $$->invert(); }
 ;
 
 PIPELINE_SEQUENCE:
-    COMPOUND_COMMAND
-|   PIPELINE_SEQUENCE '|' COMPOUND_COMMAND
+    COMPOUND_COMMAND                                { $$ = new Pipeline($1); }
+|   PIPELINE_SEQUENCE '|' COMPOUND_COMMAND          { $$ = $1; $$->add($3); }
 ;
 
 COMPOUND_COMMAND:
-    SIMPLE_COMMAND
+    SIMPLE_COMMAND                                  { $$ = $1; }
 |   ARITHMETIC_COMMAND
 |   FOR_CLAUSE
 |   IF_CLAUSE
@@ -78,7 +82,7 @@ SIMPLE_COMMAND:
 |   WORD_LIST REDIRECTION_LIST
 |   ASSIGNMENT_LIST WORD_LIST
 |   ASSIGNMENT_LIST
-|   WORD_LIST
+|   WORD_LIST                                       { $$ = new Command($1); }
 ;
 
 COMMAND_SUBSTITUTION:
@@ -98,9 +102,9 @@ ASSIGNMENT:
 ;
 
 WORD_LIST:
-    WORD
+    WORD                                            { $$ = new WordList($1); }
 |   COMMAND_SUBSTITUTION
-|   WORD_LIST WORD
+|   WORD_LIST WORD                                  { $$ = $1; $$->add($2); }
 |   WORD_LIST COMMAND_SUBSTITUTION
 ;
 
