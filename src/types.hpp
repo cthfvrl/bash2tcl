@@ -5,6 +5,7 @@
 #include "pipeline.hpp"
 #include "string.hpp"
 #include "wordlist.hpp"
+#include "assignment.hpp"
 
 struct DATA {
     String* string;
@@ -13,5 +14,7 @@ struct DATA {
     Pipeline* pipeline;
     Command* command;
     WordList* wordlist;
+    Assignment* assignment;
+    AssignmentList* assignmentlist;
 };
 #define YYSTYPE DATA

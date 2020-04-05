@@ -21,8 +21,10 @@
 %type<pipeline> PIPELINE
 %type<element> COMPOUND_COMMAND 
 %type<command> SIMPLE_COMMAND
+%type<assignment> ASSIGNMENT
+%type<assignmentlist> ASSIGNMENT_LIST
 %type<element> FOR_CLAUSE IF_CLAUSE ELSE_CLAUSE WHILE_CLAUSE
-%type<element> COMMAND_SUBSTITUTION ASSIGNMENT_LIST ASSIGNMENT REDIRECTION_LIST REDIRECTION
+%type<element> COMMAND_SUBSTITUTION REDIRECTION_LIST REDIRECTION
 %type<string> ARITHMETIC_EXPR ARITHMETIC_COMMAND
 
 %%
@@ -75,8 +77,8 @@ WHILE_CLAUSE:
 SIMPLE_COMMAND:
     ASSIGNMENT_LIST WORD_LIST REDIRECTION_LIST
 |   WORD_LIST REDIRECTION_LIST
-|   ASSIGNMENT_LIST WORD_LIST
-|   ASSIGNMENT_LIST
+|   ASSIGNMENT_LIST WORD_LIST                       { $$ = new Command($1, $2); }
+|   ASSIGNMENT_LIST                                 { $$ = new Command($1); }
 |   WORD_LIST                                       { $$ = new Command($1); }
 ;
 
@@ -85,13 +87,13 @@ COMMAND_SUBSTITUTION:
 ;
 
 ASSIGNMENT_LIST:
-    ASSIGNMENT
-|   ASSIGNMENT_LIST ASSIGNMENT
+    ASSIGNMENT                                      { $$ = new AssignmentList($1); }
+|   ASSIGNMENT_LIST ASSIGNMENT                      { $$ = $1; $$->add($2); }
 ;
 
 ASSIGNMENT:
-    WORD '=' WORD
-|   WORD '=' NUMBER
+    WORD '=' WORD                                   { $$ = new Assignment($1, $3); }
+|   WORD '=' NUMBER                                 { $$ = new Assignment($1, $3); }
 |   WORD '=' ARITHMETIC_EXPR
 |   WORD '=' COMMAND_SUBSTITUTION
 ;

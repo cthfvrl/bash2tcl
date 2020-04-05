@@ -1,11 +1,10 @@
 #include "list.hpp"
-#include <string>
 #include <iostream>
+#include <string>
 
 void List::print(size_t indent) {
-    for (auto e: elements) {
+    for (auto e : elements) {
         std::cout << std::string(indent, '\t');
         e->print(indent);
-        std::cout << std::endl;
     }
 }
