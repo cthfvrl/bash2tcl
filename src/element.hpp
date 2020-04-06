@@ -2,10 +2,12 @@
 #include <cstddef>
 
 class Element {
-public: // Replace with protected later
-    Element() = default;
+protected:
+    bool output;
+    Element();
 
 public:
-    virtual void print(size_t indent = 0) {}
+    virtual void print(size_t indent = 0);
+    virtual void noOutput();
     virtual ~Element() = default;
 };

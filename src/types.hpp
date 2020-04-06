@@ -6,6 +6,8 @@
 #include "string.hpp"
 #include "wordlist.hpp"
 #include "assignment.hpp"
+#include "command_substitution.hpp"
+#include "for.hpp"
 
 struct DATA {
     String* string;
@@ -16,5 +18,8 @@ struct DATA {
     WordList* wordlist;
     Assignment* assignment;
     AssignmentList* assignmentlist;
+    CommandSubstitution* commandsubstitution;
+    For* forclause;
+    Range* range;
 };
 #define YYSTYPE DATA

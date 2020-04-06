@@ -16,15 +16,18 @@
 %token COMMAND_SUBST_OPEN COMMAND_SUBST_CLOSE
 
 %type<string> WORD NUMBER
-%type<wordlist> WORD_LIST
+%type<wordlist> WORD_LIST WORD_RANGE
 %type<list> LIST
 %type<pipeline> PIPELINE
 %type<element> COMPOUND_COMMAND 
 %type<command> SIMPLE_COMMAND
 %type<assignment> ASSIGNMENT
 %type<assignmentlist> ASSIGNMENT_LIST
-%type<element> FOR_CLAUSE IF_CLAUSE ELSE_CLAUSE WHILE_CLAUSE
-%type<element> COMMAND_SUBSTITUTION REDIRECTION_LIST REDIRECTION
+%type<commandsubstitution> COMMAND_SUBSTITUTION
+%type<forclause> FOR_CLAUSE
+%type<range> RANGE
+%type<element> IF_CLAUSE ELSE_CLAUSE WHILE_CLAUSE
+%type<element> REDIRECTION_LIST REDIRECTION
 %type<string> ARITHMETIC_EXPR ARITHMETIC_COMMAND
 
 %%
@@ -50,13 +53,25 @@ PIPELINE:
 COMPOUND_COMMAND:
     SIMPLE_COMMAND                                  { $$ = $1; }
 |   ARITHMETIC_COMMAND
-|   FOR_CLAUSE
+|   FOR_CLAUSE                                      { $$ = $1; }
 |   IF_CLAUSE
 |   WHILE_CLAUSE
 ;
 
 FOR_CLAUSE:
-    FOR WORD IN WORD_LIST ';' DO LIST ';' DONE
+    FOR WORD IN RANGE ';' DO LIST ';' DONE          { $$ = new For($2, $4, $7); }
+;
+
+RANGE:
+    WORD_RANGE                                      { $$ = new Range($1); }
+|   COMMAND_SUBSTITUTION                            { $$ = new Range($1); }
+|   RANGE WORD_RANGE                                { $$ = $1; $$->add($2); }
+|   RANGE COMMAND_SUBSTITUTION                      { $$ = $1; $$->add($2); }
+;
+
+WORD_RANGE:
+    WORD                                            { $$ = new WordList($1); }
+|   WORD_RANGE WORD                                 { $$ = $1; $$->add($2); }
 ;
 
 IF_CLAUSE:
@@ -83,7 +98,7 @@ SIMPLE_COMMAND:
 ;
 
 COMMAND_SUBSTITUTION:
-    COMMAND_SUBST_OPEN LIST COMMAND_SUBST_CLOSE
+    COMMAND_SUBST_OPEN LIST COMMAND_SUBST_CLOSE     { $$ = new CommandSubstitution($2); }
 ;
 
 ASSIGNMENT_LIST:
@@ -100,9 +115,9 @@ ASSIGNMENT:
 
 WORD_LIST:
     WORD                                            { $$ = new WordList($1); }
-|   COMMAND_SUBSTITUTION
+|   COMMAND_SUBSTITUTION                            { $$ = new WordList($1); }
 |   WORD_LIST WORD                                  { $$ = $1; $$->add($2); }
-|   WORD_LIST COMMAND_SUBSTITUTION
+|   WORD_LIST COMMAND_SUBSTITUTION                  { $$ = $1; $$->add($2); }
 ;
 
 REDIRECTION_LIST:

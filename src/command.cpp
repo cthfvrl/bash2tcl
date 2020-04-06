@@ -23,6 +23,8 @@ void Command::print(size_t indent) {
     if (wordlist) {
         std::cout << std::string(indent, '\t') << "exec ";
         wordlist->print();
-        std::cout << '\n';
+        if (output)
+            std::cout << " >@stdout ";
     }
+    std::cout << '\n';
 }

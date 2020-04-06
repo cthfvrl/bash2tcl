@@ -9,5 +9,6 @@ protected:
 public:
     Compound(Element*);
     void add(Element*);
+    void noOutput() override;
     virtual ~Compound();
 };
