@@ -28,7 +28,8 @@
 %type<commandsubstitution> COMMAND_SUBSTITUTION
 %type<forclause> FOR_CLAUSE
 %type<range> RANGE
-%type<element> IF_CLAUSE ELSE_CLAUSE WHILE_CLAUSE
+%type<whileclause> WHILE_CLAUSE
+%type<element> IF_CLAUSE ELSE_CLAUSE
 %type<string> ARITHMETIC_EXPR ARITHMETIC_COMMAND
 
 %%
@@ -56,7 +57,7 @@ COMPOUND_COMMAND:
 |   ARITHMETIC_COMMAND
 |   FOR_CLAUSE                                      { $$ = $1; }
 |   IF_CLAUSE
-|   WHILE_CLAUSE
+|   WHILE_CLAUSE                                    { $$ = $1; }
 ;
 
 FOR_CLAUSE:
@@ -87,7 +88,7 @@ ELSE_CLAUSE:
 ;
 
 WHILE_CLAUSE:
-    WHILE LIST ';' DO LIST ';' DONE
+    WHILE LIST ';' DO LIST ';' DONE                 { $$ = new While($2, $5); }
 ;
 
 SIMPLE_COMMAND:

@@ -9,6 +9,7 @@
 #include "redirection.hpp"
 #include "string.hpp"
 #include "wordlist.hpp"
+#include "while.hpp"
 
 struct DATA {
     String* string;
@@ -24,5 +25,6 @@ struct DATA {
     CommandSubstitution* commandsubstitution;
     For* forclause;
     Range* range;
+    While* whileclause;
 };
 #define YYSTYPE DATA

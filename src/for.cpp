@@ -11,8 +11,8 @@ void Range::print(size_t indent) {
     std::cout << ']';
 }
 
-For::For(String* variable, Range* range, Element* list)
-    : variable(variable), range(range), list(list) {
+For::For(String* variable, Range* range, Element* body)
+    : variable(variable), range(range), body(body) {
 }
 
 void For::print(size_t indent) {
@@ -21,6 +21,6 @@ void For::print(size_t indent) {
     std::cout << ' ';
     range->print();
     std::cout << " {\n";
-    list->print(indent + 1);
+    body->print(indent + 1);
     std::cout << "}\n";
 }

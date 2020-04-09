@@ -12,7 +12,7 @@ public:
 class For : public Element {
     String* variable;
     Range* range;
-    Element* list;
+    Element* body;
 
 public:
     For(String*, Range*, Element*);
