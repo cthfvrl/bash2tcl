@@ -23,11 +23,12 @@
 %type<command> SIMPLE_COMMAND
 %type<assignment> ASSIGNMENT
 %type<assignmentlist> ASSIGNMENT_LIST
+%type<redirection> REDIRECTION
+%type<redirectionlist> REDIRECTION_LIST
 %type<commandsubstitution> COMMAND_SUBSTITUTION
 %type<forclause> FOR_CLAUSE
 %type<range> RANGE
 %type<element> IF_CLAUSE ELSE_CLAUSE WHILE_CLAUSE
-%type<element> REDIRECTION_LIST REDIRECTION
 %type<string> ARITHMETIC_EXPR ARITHMETIC_COMMAND
 
 %%
@@ -90,8 +91,8 @@ WHILE_CLAUSE:
 ;
 
 SIMPLE_COMMAND:
-    ASSIGNMENT_LIST WORD_LIST REDIRECTION_LIST
-|   WORD_LIST REDIRECTION_LIST
+    ASSIGNMENT_LIST WORD_LIST REDIRECTION_LIST      { $$ = new Command($1, $2, $3); }
+|   WORD_LIST REDIRECTION_LIST                      { $$ = new Command($1, $2); }
 |   ASSIGNMENT_LIST WORD_LIST                       { $$ = new Command($1, $2); }
 |   ASSIGNMENT_LIST                                 { $$ = new Command($1); }
 |   WORD_LIST                                       { $$ = new Command($1); }
@@ -121,15 +122,15 @@ WORD_LIST:
 ;
 
 REDIRECTION_LIST:
-    REDIRECTION
-|   REDIRECTION_LIST REDIRECTION
+    REDIRECTION                                     { $$ = new RedirectionList($1); }
+|   REDIRECTION_LIST REDIRECTION                    { $$ = $1; $$->add($2); }
 ;
 
 REDIRECTION:
-    '>' WORD
-|   '<' WORD
-|   NUMBER '>' WORD
-|   NUMBER '<' WORD
+    '>' WORD                                        { $$ = new Redirection(">", $2); }
+|   '<' WORD                                        { $$ = new Redirection("<", $2); }
+|   NUMBER '>' WORD                                 { $$ = new Redirection($1, ">", $3); }
+|   NUMBER '<' WORD                                 { $$ = new Redirection($1, "<", $3); }
 ;
 
 %%
