@@ -10,6 +10,7 @@
 #include "string.hpp"
 #include "wordlist.hpp"
 #include "while.hpp"
+#include "if.hpp"
 
 struct DATA {
     String* string;
@@ -26,5 +27,6 @@ struct DATA {
     For* forclause;
     Range* range;
     While* whileclause;
+    If* ifclause;
 };
 #define YYSTYPE DATA

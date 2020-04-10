@@ -7,6 +7,7 @@ protected:
     std::vector<Element*> elements;
 
 public:
+    Compound() = default;
     Compound(Element*);
     void add(Element*);
     void noOutput() override;

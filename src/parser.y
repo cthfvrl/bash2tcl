@@ -29,7 +29,7 @@
 %type<forclause> FOR_CLAUSE
 %type<range> RANGE
 %type<whileclause> WHILE_CLAUSE
-%type<element> IF_CLAUSE ELSE_CLAUSE
+%type<ifclause> IF_CLAUSE ELSE_CLAUSE
 %type<string> ARITHMETIC_EXPR ARITHMETIC_COMMAND
 
 %%
@@ -45,6 +45,7 @@ LIST:
 |   LIST OR PIPELINE
 |   '(' LIST ')'
 |   LIST ';'                                        { $$ = $1; }
+|   ';' LIST                                        { $$ = $2; }
 ;
 
 PIPELINE:
@@ -56,12 +57,12 @@ COMPOUND_COMMAND:
     SIMPLE_COMMAND                                  { $$ = $1; }
 |   ARITHMETIC_COMMAND
 |   FOR_CLAUSE                                      { $$ = $1; }
-|   IF_CLAUSE
+|   IF_CLAUSE                                       { $$ = $1; }
 |   WHILE_CLAUSE                                    { $$ = $1; }
 ;
 
 FOR_CLAUSE:
-    FOR WORD IN RANGE ';' DO LIST ';' DONE          { $$ = new For($2, $4, $7); }
+    FOR WORD IN RANGE ';' DO LIST DONE              { $$ = new For($2, $4, $7); }
 ;
 
 RANGE:
@@ -77,18 +78,18 @@ WORD_RANGE:
 ;
 
 IF_CLAUSE:
-    IF LIST ';' THEN LIST ';' FI
-|   IF LIST ';' THEN LIST ';' ELSE_CLAUSE FI
+    IF LIST THEN LIST FI                            { $$ = new If(new IfElement($2, $4)); }
+|   IF LIST THEN LIST ELSE_CLAUSE FI                { $$ = $5; $$->add(new IfElement($2, $4)); }
 ;
 
 ELSE_CLAUSE:
-    ELSE LIST ';'
-|   ELIF LIST ';' THEN LIST ';'
-|   ELIF LIST ';' THEN LIST ';' ELSE_CLAUSE
+    ELSE LIST                                       { $$ = new If(); $$->addElse($2); }
+|   ELIF LIST THEN LIST                             { $$ = new If(new IfElement($2, $4)); }
+|   ELIF LIST THEN LIST ELSE_CLAUSE                 { $$ = $5; $$->add(new IfElement($2, $4)); }
 ;
 
 WHILE_CLAUSE:
-    WHILE LIST ';' DO LIST ';' DONE                 { $$ = new While($2, $5); }
+    WHILE LIST DO LIST DONE                         { $$ = new While($2, $4); }
 ;
 
 SIMPLE_COMMAND:
