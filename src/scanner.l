@@ -7,6 +7,7 @@
     void yyerror(std::string_view s);
     int arithm_brace_count = 0;
     std::stack<int> command_brace_count;
+    std::stack<int> state;
 %}
 
 %option yylineno
@@ -24,35 +25,41 @@
                 }
 =               return '=';
 ;[ \t\r\n;]*    return ';';
-'               BEGIN(STR_EXACT);
+'               {
+                    state.push(YY_START);
+                    BEGIN(STR_EXACT);
+                }
 <STR_EXACT>'    {
                     yylval.string = new String(std::string(yytext, yytext + strlen(yytext) - 1));
-                    BEGIN(INITIAL);
+                    BEGIN(state.top());
+                    state.pop();
                     return WORD;
                 }
 <STR_EXACT>.|\n yymore();
 \"              {
+                    state.push(YY_START);
                     BEGIN(STR);
                     yymore();
                 }
 <STR>\"         {
                     yylval.string = new String(yytext);
-                    BEGIN(INITIAL);
+                    BEGIN(state.top());
+                    state.pop();
                     return WORD;
                 }
 <STR>.|\n       yymore();
 <COMMAND_SUBST>` {
-                    if(!command_brace_count.empty())
-                        BEGIN(COMMAND_SUBST_BRACE);
-                    else
-                        BEGIN(INITIAL);
+                    BEGIN(state.top());
+                    state.pop();
                     return COMMAND_SUBST_CLOSE;
                 }
 `               {
+                    state.push(YY_START);
                     BEGIN(COMMAND_SUBST);
                     return COMMAND_SUBST_OPEN;
                 }
 $\(             {
+                    state.push(YY_START);
                     BEGIN(COMMAND_SUBST_BRACE);
                     command_brace_count.push(1);
                     return COMMAND_SUBST_OPEN;
@@ -64,22 +71,22 @@ $\(             {
                     --command_brace_count.top();
                     if(!command_brace_count.top()) {
                         command_brace_count.pop();
-                        if(!command_brace_count.empty())
-                            BEGIN(COMMAND_SUBST_BRACE);
-                        else
-                            BEGIN(INITIAL);
+                        BEGIN(state.top());
+                        state.pop();
                         return COMMAND_SUBST_CLOSE;
                     }
                 }
 \(\(            {
                     if (arithm_brace_count)
                         yyerror("Unsupported nested arithmetic command");
+                    state.push(YY_START);
                     BEGIN(ARITHM_COMMAND);
                     arithm_brace_count = 2;
                 }
 $\(\(           {
                     if (arithm_brace_count)
                         yyerror("Unsupported nested arithmetic expression");
+                    state.push(YY_START);
                     BEGIN(ARITHM_EXPR);
                     arithm_brace_count = 2;
                 }
@@ -92,7 +99,8 @@ $\(\(           {
                         --arithm_brace_count; \
                         if(!arithm_brace_count && yytext[strlen(yytext) - 2] == ')') { \
                             yylval.string = new String(std::string(yytext, yytext + strlen(yytext) - 2)); \
-                            BEGIN(INITIAL); \
+                            BEGIN(state.top()); \
+                            state.pop(); \
                             return token; \
                         } \
                         else if (arithm_brace_count <= 0) { \

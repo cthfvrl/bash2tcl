@@ -113,7 +113,7 @@ ASSIGNMENT:
     WORD '=' WORD                                   { $$ = new Assignment($1, $3); }
 |   WORD '=' NUMBER                                 { $$ = new Assignment($1, $3); }
 |   WORD '=' ARITHMETIC_EXPR
-|   WORD '=' COMMAND_SUBSTITUTION
+|   WORD '=' COMMAND_SUBSTITUTION                   { $$ = new Assignment($1, $3); }
 ;
 
 WORD_LIST:
