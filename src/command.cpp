@@ -32,10 +32,10 @@ void Command::print(size_t indent) {
     if (wordlist) {
         std::cout << "exec ";
         wordlist->print();
-        if (redirectionlist)
-            redirectionlist->print();
         if (output)
             std::cout << " >&@stdout <@stdin ";
+        if (redirectionlist)
+            redirectionlist->print();
     }
     std::cout << '\n';
 }
