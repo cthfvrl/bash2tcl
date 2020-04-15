@@ -1,4 +1,4 @@
-FILES:=lex.yy.c parser.tab.c src/*.cpp
+FILES:=incl.cpp
 FLAGS:=-std=c++17
 OUT:=bash2tcl
 
@@ -9,7 +9,9 @@ all: build
 build:
 	flex src/scanner.l 
 	bison -d src/parser.y
-	g++ -O3 $(FLAGS) $(FILES) -o $(OUT)
+	bash preprocess.sh
+	g++ $(FLAGS) $(FILES) -o $(OUT)
+	rm incl.cpp
 
 debug:
 	flex -d src/scanner.l 

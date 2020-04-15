@@ -2,7 +2,7 @@
 #include "element.hpp"
 #include <vector>
 
-class Compound : public Element {
+class Compound : virtual public Element {
 protected:
     std::vector<Element*> elements;
 
