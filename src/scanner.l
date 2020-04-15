@@ -5,20 +5,100 @@
     #include "src/types.hpp"
     #include "parser.tab.h"
     void yyerror(std::string_view s);
-    int arithm_brace_count = 0;
-    std::stack<int> command_brace_count;
+    std::stack<int> brace_count;
     std::stack<int> state;
 %}
 
 %option yylineno
 %option noyywrap
 
-%x ARITHM_EXPR ARITHM_COMMAND
+%x ARITHM
 %x STR_EXACT STR
 %s COMMAND_SUBST COMMAND_SUBST_BRACE
 
 %%
 
+<ARITHM>[a-zA-Z_][a-zA-Z0-9_]* {
+                    yylval.var = new Var(yytext);
+                    return VAR;
+                }
+<COMMAND_SUBST>` {
+                    BEGIN(state.top());
+                    state.pop();
+                    return COMMAND_SUBST_CLOSE;
+                }
+<*>`            {
+                    state.push(YY_START);
+                    BEGIN(COMMAND_SUBST);
+                    return COMMAND_SUBST_OPEN;
+                }
+<*>$\(          {
+                    state.push(YY_START);
+                    BEGIN(COMMAND_SUBST_BRACE);
+                    brace_count.push(1);
+                    return COMMAND_SUBST_OPEN;
+                }
+<COMMAND_SUBST_BRACE>\( {
+                    ++brace_count.top();
+                    return '(';
+                }
+<COMMAND_SUBST_BRACE>\) {
+                    --brace_count.top();
+                    if(!brace_count.top()) {
+                        brace_count.pop();
+                        BEGIN(state.top());
+                        state.pop();
+                        return COMMAND_SUBST_CLOSE;
+                    }
+                    return ')';
+                }
+<*>\(\(         {
+                    if (YY_START == ARITHM)
+                        yyerror("Unsupported nested arithmetic command");
+                    state.push(YY_START);
+                    BEGIN(ARITHM);
+                    brace_count.push(2);
+                    return ARITHMETIC_COMMAND_OPEN;
+                }
+<*>$\(\(        {
+                    if (YY_START == ARITHM)
+                        yyerror("Unsupported nested arithmetic expression");
+                    state.push(YY_START);
+                    BEGIN(ARITHM);
+                    brace_count.push(2);
+                    return ARITHMETIC_EXPR_OPEN;
+                }
+<ARITHM>\(      {
+                    ++brace_count.top();
+                    yylval.string = new String(yytext);
+                    return WORD;
+                }
+<ARITHM>\)\)    {
+                    brace_count.top() -= 2;
+                    if(!brace_count.top()) {
+                        BEGIN(state.top());
+                        state.pop();
+                        return ARITHMETIC_CLOSE;
+                    }
+                    if (brace_count.top() <= 0) {
+                        yyerror("Incorrect bracket sequence");
+                    }
+                    ++brace_count.top();
+                    unput(')');
+                    yylval.string = new String(")");
+                    return WORD;
+                }
+<ARITHM>\)      {
+                    --brace_count.top();
+                    yylval.string = new String(yytext);
+                    return WORD;
+                }
+<ARITHM>.       {
+                    if(yytext[0] == '\n')
+                        yytext[0] = ' ';
+                    yylval.string = new String(yytext);
+                    return WORD;
+                }
 [0-9]+          { 
                     yylval.string = new String(yytext);
                     return NUMBER;
@@ -48,76 +128,10 @@
                     return WORD;
                 }
 <STR>.|\n       yymore();
-<COMMAND_SUBST>` {
-                    BEGIN(state.top());
-                    state.pop();
-                    return COMMAND_SUBST_CLOSE;
-                }
-`               {
-                    state.push(YY_START);
-                    BEGIN(COMMAND_SUBST);
-                    return COMMAND_SUBST_OPEN;
-                }
-$\(             {
-                    state.push(YY_START);
-                    BEGIN(COMMAND_SUBST_BRACE);
-                    command_brace_count.push(1);
-                    return COMMAND_SUBST_OPEN;
-                }
-<COMMAND_SUBST_BRACE>\( {
-                    ++command_brace_count.top();
-                }
-<COMMAND_SUBST_BRACE>\) {
-                    --command_brace_count.top();
-                    if(!command_brace_count.top()) {
-                        command_brace_count.pop();
-                        BEGIN(state.top());
-                        state.pop();
-                        return COMMAND_SUBST_CLOSE;
-                    }
-                }
-\(\(            {
-                    if (arithm_brace_count)
-                        yyerror("Unsupported nested arithmetic command");
-                    state.push(YY_START);
-                    BEGIN(ARITHM_COMMAND);
-                    arithm_brace_count = 2;
-                }
-$\(\(           {
-                    if (arithm_brace_count)
-                        yyerror("Unsupported nested arithmetic expression");
-                    state.push(YY_START);
-                    BEGIN(ARITHM_EXPR);
-                    arithm_brace_count = 2;
-                }
-<ARITHM_COMMAND>. {
-                #define ARITHMETIC(token) { \
-                    char c = yytext[strlen(yytext) - 1]; \
-                    if(c == '(') \
-                        ++arithm_brace_count; \
-                    else if(c == ')') {\
-                        --arithm_brace_count; \
-                        if(!arithm_brace_count && yytext[strlen(yytext) - 2] == ')') { \
-                            yylval.string = new String(std::string(yytext, yytext + strlen(yytext) - 2)); \
-                            BEGIN(state.top()); \
-                            state.pop(); \
-                            return token; \
-                        } \
-                        else if (arithm_brace_count <= 0) { \
-                            yyerror("Incorrect bracket sequence"); \
-                        } \
-                    } \
-                    yymore(); \
-                }
-                ARITHMETIC(ARITHMETIC_COMMAND)
-                }
-<ARITHM_EXPR>.  ARITHMETIC(ARITHMETIC_EXPR)
 \(              return '(';
 \)              return ')';
 [<]             return '<';
 >               return '>';
-[<]=            return LEQ;
->=              return GEQ;
 !               return '!';
 &&              return AND;
 \|\|            return OR; 

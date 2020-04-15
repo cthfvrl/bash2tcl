@@ -22,15 +22,17 @@ void Assignment::print_env(size_t indent) {
 }
 
 void AssignmentList::print(size_t indent) {
-    for (auto& e : elements) {
-        e->print(indent);
+    elements.front()->print(indent);
+    for (size_t i = 1; i < elements.size(); ++i) {
         std::cout << '\n';
+        elements[i]->print(indent);
     }
 }
 
 void AssignmentList::print_env(size_t indent) {
-    for (auto& e : elements) {
-        dynamic_cast<Assignment*>(e)->print_env(indent);
+    dynamic_cast<Assignment*>(elements.front())->print_env(indent);
+    for (size_t i = 1; i < elements.size(); ++i) {
         std::cout << '\n';
+        dynamic_cast<Assignment*>(elements[i])->print_env(indent);
     }
 }

@@ -37,5 +37,4 @@ void Command::print(size_t indent) {
         if (redirectionlist)
             redirectionlist->print();
     }
-    std::cout << '\n';
 }

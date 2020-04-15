@@ -5,5 +5,6 @@
 void List::print(size_t indent) {
     for (auto e : elements) {
         e->print(indent);
+        std::cout << '\n';
     }
 }

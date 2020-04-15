@@ -9,17 +9,18 @@
     }
 %}
 
-%token WORD NUMBER 
-%token ARITHMETIC_EXPR ARITHMETIC_COMMAND
-%token LEQ GEQ AND OR
+%token WORD NUMBER VAR
+%token AND OR
 %token FOR IN IF FI THEN ELSE ELIF WHILE DO DONE
 %token COMMAND_SUBST_OPEN COMMAND_SUBST_CLOSE
+%token ARITHMETIC_EXPR_OPEN ARITHMETIC_COMMAND_OPEN ARITHMETIC_CLOSE
 
 %type<string> WORD NUMBER
+%type<var> VAR
 %type<wordlist> WORD_LIST WORD_RANGE
 %type<list> LIST
 %type<pipeline> PIPELINE
-%type<element> COMPOUND_COMMAND 
+%type<element> COMPOUND_COMMAND
 %type<command> SIMPLE_COMMAND
 %type<assignment> ASSIGNMENT
 %type<assignmentlist> ASSIGNMENT_LIST
@@ -30,7 +31,8 @@
 %type<range> RANGE
 %type<whileclause> WHILE_CLAUSE
 %type<ifclause> IF_CLAUSE ELSE_CLAUSE
-%type<string> ARITHMETIC_EXPR ARITHMETIC_COMMAND
+%type<arithmetic> ARITHMETIC ARITHMETIC1
+%type<element> ARITHMETIC_ELEMENT
 
 %%
 
@@ -55,10 +57,25 @@ PIPELINE:
 
 COMPOUND_COMMAND:
     SIMPLE_COMMAND                                  { $$ = $1; }
-|   ARITHMETIC_COMMAND
+|   ARITHMETIC_COMMAND_OPEN ARITHMETIC              { $$ = $2; }
 |   FOR_CLAUSE                                      { $$ = $1; }
 |   IF_CLAUSE                                       { $$ = $1; }
 |   WHILE_CLAUSE                                    { $$ = $1; }
+;
+
+ARITHMETIC:
+    ARITHMETIC1 ARITHMETIC_CLOSE                    { $$ = $1; }
+;
+
+ARITHMETIC1:
+    ARITHMETIC_ELEMENT                              { $$ = new Arithmetic($1); }
+|   ARITHMETIC1 ARITHMETIC_ELEMENT                  { $$ = $1; $$->add($2); }
+;
+
+ARITHMETIC_ELEMENT:
+    WORD                                            { $$ = $1; }
+|   VAR                                             { $$ = $1; }
+|   COMMAND_SUBSTITUTION                            { $$ = $1; }
 ;
 
 FOR_CLAUSE:
@@ -112,7 +129,7 @@ ASSIGNMENT_LIST:
 ASSIGNMENT:
     WORD '=' WORD                                   { $$ = new Assignment($1, $3); }
 |   WORD '=' NUMBER                                 { $$ = new Assignment($1, $3); }
-|   WORD '=' ARITHMETIC_EXPR
+|   WORD '=' ARITHMETIC_EXPR_OPEN ARITHMETIC        { $$ = new Assignment($1, new CommandSubstitution($4)); }
 |   WORD '=' COMMAND_SUBSTITUTION                   { $$ = new Assignment($1, $3); }
 ;
 

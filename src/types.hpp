@@ -11,9 +11,11 @@
 #include "wordlist.hpp"
 #include "while.hpp"
 #include "if.hpp"
+#include "arithmetic.hpp"
 
 struct DATA {
     String* string;
+    Var* var;
     Element* element;
     List* list;
     Pipeline* pipeline;
@@ -28,5 +30,6 @@ struct DATA {
     Range* range;
     While* whileclause;
     If* ifclause;
+    Arithmetic* arithmetic;
 };
 #define YYSTYPE DATA
