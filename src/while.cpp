@@ -11,5 +11,5 @@ void While::print(size_t indent) {
     condition->print(indent + 1);
     std::cout << std::string(indent + 1, '\t') << "}]} {\n";
     body->print(indent + 1);
-    std::cout << std::string(indent, '\t') << "}\n";
+    std::cout << std::string(indent, '\t') << "}";
 }

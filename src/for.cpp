@@ -22,5 +22,5 @@ void For::print(size_t indent) {
     range->print();
     std::cout << " {\n";
     body->print(indent + 1);
-    std::cout << "}\n";
+    std::cout << "}";
 }

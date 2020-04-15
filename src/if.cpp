@@ -33,7 +33,6 @@ void If::print(size_t indent) {
         elseBody->print(indent + 1);
         std::cout << std::string(indent, '\t') << "}";
     }
-    std::cout << '\n';
 }
 
 // TODO tests
