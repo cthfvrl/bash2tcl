@@ -11,4 +11,5 @@ public:
     void print_condition(size_t indent = 0) override;
     int getSubshellLevel();
     void setSubshellLevel(int);
+    void add(List*);
 };

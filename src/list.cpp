@@ -1,4 +1,5 @@
 #include "list.hpp"
+#include <algorithm>
 #include <iostream>
 #include <string>
 
@@ -24,4 +25,9 @@ int List::getSubshellLevel() {
 
 void List::setSubshellLevel(int level) {
     subshellLevel = level;
+}
+
+void List::add(List* e) {
+    Compound<Condition>::add(e);
+    subshellLevel = std::max(subshellLevel, e->getSubshellLevel());
 }

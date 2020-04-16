@@ -10,6 +10,6 @@ void Subshell::print(size_t indent) {
     std::cout << std::string(indent, '\t') << "interp create i" << subshellLevel << '\n';
     std::cout << std::string(indent, '\t') << "interp eval i" << subshellLevel << " {\n";
     list->print(indent + 1);
-    std::cout << "\n}\n";
+    std::cout << std::string(indent, '\t') << "\n}\n";
     std::cout << std::string(indent, '\t') << "interp delete i" << subshellLevel;
 }
