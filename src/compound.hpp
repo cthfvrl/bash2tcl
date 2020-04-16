@@ -2,14 +2,27 @@
 #include "element.hpp"
 #include <vector>
 
+template <class T = Element>
 class Compound : virtual public Element {
 protected:
-    std::vector<Element*> elements;
+    std::vector<T*> elements;
 
 public:
     Compound() = default;
-    Compound(Element*);
-    void add(Element*);
-    void noOutput() override;
-    virtual ~Compound();
+
+    Compound(T* e) : elements({e}) {
+    }
+
+    void add(T* e) {
+        elements.push_back(e);
+    }
+
+    void noOutput() override {
+        Element::noOutput();
+        for (auto e : elements)
+            e->noOutput();
+    }
+
+    virtual ~Compound() {
+    }
 };

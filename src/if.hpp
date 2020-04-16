@@ -1,18 +1,19 @@
 #pragma once
 #include "compound.hpp"
 #include "element.hpp"
+#include "condition.hpp"
 #include <vector>
 
 class IfElement : public Element {
-    Element* condition;
+    Condition* condition;
     Element* body;
 
 public:
-    IfElement(Element*, Element*);
+    IfElement(Condition*, Element*);
     void print(size_t indent = 0) override;
 };
 
-class If : public Compound {
+class If : public Compound<>, public Condition {
     Element* elseBody;
 
 public:
@@ -20,4 +21,5 @@ public:
     If();
     void addElse(Element*);
     void print(size_t indent = 0) override;
+    using Condition::print_condition;
 };

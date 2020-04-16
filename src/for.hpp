@@ -1,15 +1,16 @@
 #pragma once
 #include "compound.hpp"
+#include "condition.hpp"
 #include "element.hpp"
 #include "string.hpp"
 
-class Range : public Compound {
+class Range : public Compound<> {
 public:
     using Compound::Compound;
     void print(size_t indent = 0) override;
 };
 
-class For : public Element {
+class For : public Condition {
     String* variable;
     Range* range;
     Element* body;
@@ -17,4 +18,5 @@ class For : public Element {
 public:
     For(String*, Range*, Element*);
     void print(size_t indent = 0) override;
+    using Condition::print_condition;
 };

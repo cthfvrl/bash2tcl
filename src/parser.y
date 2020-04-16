@@ -20,7 +20,7 @@
 %type<wordlist> WORD_LIST WORD_RANGE
 %type<list> LIST
 %type<pipeline> PIPELINE
-%type<element> COMPOUND_COMMAND
+%type<condition> COMPOUND_COMMAND
 %type<command> SIMPLE_COMMAND
 %type<assignment> ASSIGNMENT
 %type<assignmentlist> ASSIGNMENT_LIST

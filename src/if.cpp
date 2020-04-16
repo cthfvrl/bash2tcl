@@ -2,14 +2,14 @@
 #include <iostream>
 #include <string>
 
-IfElement::IfElement(Element* condition, Element* body)
+IfElement::IfElement(Condition* condition, Element* body)
     : condition(condition), body(body) {
 }
 
 void IfElement::print(size_t indent) {
-    std::cout << "{![catch {\n";
-    condition->print(indent + 1);
-    std::cout << std::string(indent + 1, '\t') << "}]} {\n";
+    std::cout << '{';
+    condition->print_condition();
+    std::cout << std::string(indent, '\t') << "} {\n";
     body->print(indent + 1);
     std::cout << std::string(indent, '\t') << "} ";
 }

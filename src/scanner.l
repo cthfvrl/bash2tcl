@@ -22,6 +22,10 @@
                     yylval.var = new Var(yytext);
                     return VAR;
                 }
+<ARITHM>$[a-zA-Z_][a-zA-Z0-9_]* {
+                    yylval.string = new String(yytext);
+                    return WORD;
+                }
 <COMMAND_SUBST>` {
                     BEGIN(state.top());
                     state.pop();

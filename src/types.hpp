@@ -1,22 +1,24 @@
 #pragma once
+#include "arithmetic.hpp"
 #include "assignment.hpp"
 #include "command.hpp"
 #include "command_substitution.hpp"
+#include "condition.hpp"
 #include "element.hpp"
 #include "for.hpp"
+#include "if.hpp"
 #include "list.hpp"
 #include "pipeline.hpp"
 #include "redirection.hpp"
 #include "string.hpp"
-#include "wordlist.hpp"
 #include "while.hpp"
-#include "if.hpp"
-#include "arithmetic.hpp"
+#include "wordlist.hpp"
 
 struct DATA {
     String* string;
     Var* var;
     Element* element;
+    Condition* condition;
     List* list;
     Pipeline* pipeline;
     Command* command;

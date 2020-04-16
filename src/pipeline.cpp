@@ -15,3 +15,13 @@ void Pipeline::print(size_t indent) {
     // }
     elements.back()->print();
 }
+
+void Pipeline::print_condition(size_t indent) {
+    std::cout << std::string(indent, '\t');
+    if (elements.size() > 1) {
+        std::cout << "Pipelines are not supported yet...\n";
+        return;
+        // TODO
+    }
+    elements.back()->print_condition();
+}

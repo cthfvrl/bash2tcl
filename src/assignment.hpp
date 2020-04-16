@@ -13,7 +13,7 @@ public:
     void print_env(size_t indent = 0);
 };
 
-class AssignmentList : public Compound {
+class AssignmentList : public Compound<> {
 public:
     using Compound::Compound;
     void print(size_t indent = 0) override;
