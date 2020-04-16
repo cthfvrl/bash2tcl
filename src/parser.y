@@ -37,15 +37,15 @@
 %%
 
 PROGRAM:
-    LIST                                            { $1->print(); delete $1; }
+    LIST                                            { $1->print(); std::cout << '\n'; delete $1; }
 ;
 
 LIST:
     PIPELINE                                        { $$ = new List($1);  }
-|   LIST ';' PIPELINE                               { $$ = $1; $$->add($3); }
-|   LIST AND PIPELINE
-|   LIST OR PIPELINE
-|   '(' LIST ')'
+|   LIST ';' LIST                                   { $$ = $1; $$->add($3); }
+|   LIST AND LIST
+|   LIST OR LIST
+|   '(' LIST ')'                                    { $$ = new List(new Subshell($2)); $$->setSubshellLevel($2->getSubshellLevel()+1); }
 |   LIST ';'                                        { $$ = $1; }
 |   ';' LIST                                        { $$ = $2; }
 ;

@@ -11,6 +11,7 @@
 #include "pipeline.hpp"
 #include "redirection.hpp"
 #include "string.hpp"
+#include "subshell.hpp"
 #include "while.hpp"
 #include "wordlist.hpp"
 

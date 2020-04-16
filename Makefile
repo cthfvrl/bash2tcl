@@ -16,7 +16,9 @@ build:
 debug:
 	flex -d src/scanner.l 
 	bison -dtv src/parser.y
+	bash preprocess.sh
 	g++ -g -no-pie $(FLAGS) $(FILES) -o $(OUT)	
+	rm incl.cpp
 
 test:
 	for file in test/*; do echo $$file; ./$(OUT) < $$file; done
