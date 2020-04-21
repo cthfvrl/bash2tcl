@@ -20,3 +20,12 @@ public:
     void print(size_t indent = 0) override;
     using Condition::print_condition;
 };
+
+class Pattern : public Element {
+    String* pattern;
+
+public:
+    Pattern(String*);
+    void print(size_t indent = 0) override;
+    static Element* check_pattern(String*);
+};

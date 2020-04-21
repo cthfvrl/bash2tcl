@@ -90,8 +90,8 @@ RANGE:
 ;
 
 WORD_RANGE:
-    WORD                                            { $$ = new WordList($1); }
-|   WORD_RANGE WORD                                 { $$ = $1; $$->add($2); }
+    WORD                                            { $$ = new WordList(Pattern::check_pattern($1)); }
+|   WORD_RANGE WORD                                 { $$ = $1; $$->add(Pattern::check_pattern($2)); }
 ;
 
 IF_CLAUSE:
