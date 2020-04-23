@@ -34,6 +34,10 @@
 %type<arithmetic> ARITHMETIC ARITHMETIC1
 %type<element> ARITHMETIC_ELEMENT
 
+%left ';'
+%left OR AND
+%left '|'
+
 %%
 
 PROGRAM:
