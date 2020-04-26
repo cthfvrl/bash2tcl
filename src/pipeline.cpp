@@ -29,11 +29,11 @@ void Pipeline::print(size_t indent) {
 }
 
 void Pipeline::print_condition(size_t indent) {
-    std::cout << std::string(indent, '\t');
-    if (elements.size() > 1) {
-        std::cout << "Pipelines are not supported yet...\n";
-        return;
-        // TODO
+    std::cout << std::string(indent, '\t') << "![catch {exec ";
+    for (size_t i = 0; i < elements.size() - 1; ++i) {
+        elements[i]->print();
+        std::cout << "| ";
     }
-    elements.back()->print_condition();
+    elements.back()->print();
+    std::cout << "}]";
 }

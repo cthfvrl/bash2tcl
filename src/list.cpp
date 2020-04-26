@@ -12,7 +12,7 @@ void List::print(size_t indent) {
 }
 
 void List::print_condition(size_t indent) {
-    elements.front()->print(indent);
+    elements.front()->print_condition(indent);
     for (size_t i = 1; i < elements.size(); ++i) {
         std::cout << '\n';
         elements[i]->print_condition(indent);
