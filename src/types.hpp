@@ -22,6 +22,7 @@ struct DATA {
     Condition* condition;
     List* list;
     Pipeline* pipeline;
+    PipelineCommand* pipelinecommand;
     Command* command;
     WordList* wordlist;
     Assignment* assignment;

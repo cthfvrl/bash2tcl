@@ -22,6 +22,7 @@
 %type<pipeline> PIPELINE
 %type<condition> COMPOUND_COMMAND
 %type<command> SIMPLE_COMMAND
+%type<pipelinecommand> PIPELINE_COMMAND
 %type<assignment> ASSIGNMENT
 %type<assignmentlist> ASSIGNMENT_LIST
 %type<redirection> REDIRECTION
@@ -45,7 +46,7 @@ PROGRAM:
 ;
 
 LIST:
-    PIPELINE                                        { $$ = new List($1);  }
+    COMPOUND_COMMAND                                { $$ = new List($1); }
 |   LIST ';' LIST                                   { $$ = $1; $$->add($3); }
 |   LIST AND LIST
 |   LIST OR LIST
@@ -54,17 +55,18 @@ LIST:
 |   ';' LIST                                        { $$ = $2; }
 ;
 
-PIPELINE:
-    COMPOUND_COMMAND                                { $$ = new Pipeline($1); }
-|   PIPELINE '|' COMPOUND_COMMAND                   { $$ = $1; $$->add($3); }
-;
-
 COMPOUND_COMMAND:
-    SIMPLE_COMMAND                                  { $$ = $1; }
+    PIPELINE                                        { $$ = $1; }
+|   SIMPLE_COMMAND                                  { $$ = $1; }
 |   ARITHMETIC_COMMAND_OPEN ARITHMETIC              { $$ = $2; }
 |   FOR_CLAUSE                                      { $$ = $1; }
 |   IF_CLAUSE                                       { $$ = $1; }
 |   WHILE_CLAUSE                                    { $$ = $1; }
+;
+
+PIPELINE:
+    PIPELINE_COMMAND '|' PIPELINE_COMMAND           { $$ = new Pipeline($1); $$->add($3); }
+|   PIPELINE '|' PIPELINE_COMMAND                   { $$ = $1; $$->add($3); }
 ;
 
 ARITHMETIC:
@@ -119,6 +121,11 @@ SIMPLE_COMMAND:
 |   ASSIGNMENT_LIST WORD_LIST                       { $$ = new Command($1, $2); }
 |   ASSIGNMENT_LIST                                 { $$ = new Command($1); }
 |   WORD_LIST                                       { $$ = new Command($1); }
+;
+
+PIPELINE_COMMAND:
+    WORD_LIST REDIRECTION_LIST                      { $$ = new PipelineCommand($1, $2); }
+|   WORD_LIST                                       { $$ = new PipelineCommand($1); }
 ;
 
 COMMAND_SUBSTITUTION:

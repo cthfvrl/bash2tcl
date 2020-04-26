@@ -136,9 +136,9 @@
 \)              return ')';
 [<]             return '<';
 >               return '>';
-!               return '!';
 &&              return AND;
-\|\|            return OR; 
+\|\|            return OR;
+\|              return '|';
 for             return FOR;
 in              return IN;
 if              return IF;
