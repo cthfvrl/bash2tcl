@@ -33,7 +33,7 @@ void Command::print(size_t indent) {
         std::cout << "exec ";
         wordlist->print();
         if (output)
-            std::cout << " >&@stdout <@stdin ";
+            std::cout << " >&@stdout <@stdin";
         if (redirectionlist)
             redirectionlist->print();
     }
