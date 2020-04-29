@@ -114,7 +114,7 @@
                     BEGIN(STR_EXACT);
                 }
 <STR_EXACT>'    {
-                    yylval.string = new String(std::string(yytext, yytext + strlen(yytext) - 1));
+                    yylval.string = new String("{" + std::string(yytext, yytext + strlen(yytext) - 1) + "}");
                     BEGIN(state.top());
                     state.pop();
                     return WORD;
