@@ -9,6 +9,7 @@
 #include "if.hpp"
 #include "list.hpp"
 #include "pipeline.hpp"
+#include "quote.hpp"
 #include "redirection.hpp"
 #include "string.hpp"
 #include "subshell.hpp"
@@ -23,6 +24,7 @@ struct DATA {
     Pipeline* pipeline;
     PipelineCommand* pipelinecommand;
     Command* command;
+    Quote* quote;
     WordList* wordlist;
     Assignment* assignment;
     AssignmentList* assignmentlist;

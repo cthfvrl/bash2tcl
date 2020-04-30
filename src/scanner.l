@@ -108,30 +108,32 @@
                     yylval.string = new String(yytext);
                     return WORD;
                 }
-<ARITHM>.       {
+<ARITHM>.|\n    {
                     if(yytext[0] == '\n')
                         yytext[0] = ' ';
                     yylval.string = new String(yytext);
                     return WORD;
                 }
-[0-9]+          { 
-                    yylval.string = new String(yytext);
-                    return NUMBER;
-                }
-=               return '=';
-;[ \t\r\n;]*    return ';';
 \"              {
                     state.push(YY_START);
                     BEGIN(STR);
-                    yymore();
+                    return '"';
                 }
 <STR>\"         {
-                    yylval.string = new String(yytext);
                     BEGIN(state.top());
                     state.pop();
+                    return '"';
+                }
+<STR>.|\n       {
+                    yylval.string = new String(yytext);
                     return WORD;
                 }
-<STR>.|\n       yymore();
+[0-9]+          { 
+                    yylval.string = new String(yytext);
+                    return WORD;
+                }
+=               return '=';
+;[ \t\r\n;]*    return ';';
 \(              return '(';
 \)              return ')';
 [<]             return '<';
@@ -149,7 +151,7 @@ elif            return ELIF;
 while           return WHILE;
 do              return DO;
 done            return DONE;
-[-$*a-zA-Z_][a-zA-Z0-9_!@#$%^*,.?/+\-~]* {
+[-$*&a-zA-Z_][a-zA-Z0-9_!@#$%^*,.?/+\-~]* {
                     yylval.string = new String(yytext);
                     return WORD;
                 }

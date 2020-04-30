@@ -9,13 +9,13 @@
     }
 %}
 
-%token WORD NUMBER
+%token WORD
 %token AND OR
 %token FOR IN IF FI THEN ELSE ELIF WHILE DO DONE
 %token COMMAND_SUBST_OPEN COMMAND_SUBST_CLOSE
 %token ARITHMETIC_EXPR_OPEN ARITHMETIC_COMMAND_OPEN ARITHMETIC_CLOSE
 
-%type<string> WORD NUMBER
+%type<string> WORD
 %type<wordlist> WORD_LIST WORD_RANGE
 %type<list> LIST
 %type<pipeline> PIPELINE
@@ -32,7 +32,8 @@
 %type<whileclause> WHILE_CLAUSE
 %type<ifclause> IF_CLAUSE ELSE_CLAUSE
 %type<arithmetic> ARITHMETIC ARITHMETIC1
-%type<element> ARITHMETIC_ELEMENT
+%type<quote> QUOTE QUOTE1
+%type<element> ELEMENT
 
 %left ';'
 %left OR AND
@@ -73,11 +74,11 @@ ARITHMETIC:
 ;
 
 ARITHMETIC1:
-    ARITHMETIC_ELEMENT                              { $$ = new Arithmetic($1); }
-|   ARITHMETIC1 ARITHMETIC_ELEMENT                  { $$ = $1; $$->add($2); }
+    ELEMENT                                         { $$ = new Arithmetic($1); }
+|   ARITHMETIC1 ELEMENT                             { $$ = $1; $$->add($2); }
 ;
 
-ARITHMETIC_ELEMENT:
+ELEMENT:
     WORD                                            { $$ = $1; }
 |   COMMAND_SUBSTITUTION                            { $$ = $1; }
 ;
@@ -130,6 +131,15 @@ COMMAND_SUBSTITUTION:
     COMMAND_SUBST_OPEN LIST COMMAND_SUBST_CLOSE     { $$ = new CommandSubstitution($2); }
 ;
 
+QUOTE:
+    '"' QUOTE1 '"'                                  { $$ = $2; }
+;
+
+QUOTE1:
+    ELEMENT                                         { $$ = new Quote($1); }
+|   QUOTE1 ELEMENT                                  { $$ = $1; $$->add($2); }
+;
+
 ASSIGNMENT_LIST:
     ASSIGNMENT                                      { $$ = new AssignmentList($1); }
 |   ASSIGNMENT_LIST ASSIGNMENT                      { $$ = $1; $$->add($2); }
@@ -137,7 +147,7 @@ ASSIGNMENT_LIST:
 
 ASSIGNMENT:
     WORD '=' WORD                                   { $$ = new Assignment($1, $3); }
-|   WORD '=' NUMBER                                 { $$ = new Assignment($1, $3); }
+|   WORD '=' QUOTE                                  { $$ = new Assignment($1, $3); }
 |   WORD '=' ARITHMETIC_EXPR_OPEN ARITHMETIC        { $$ = new Assignment($1, new CommandSubstitution($4)); }
 |   WORD '=' COMMAND_SUBSTITUTION                   { $$ = new Assignment($1, $3); }
 ;
@@ -145,8 +155,10 @@ ASSIGNMENT:
 WORD_LIST:
     WORD                                            { $$ = new WordList($1); }
 |   COMMAND_SUBSTITUTION                            { $$ = new WordList($1); }
+|   QUOTE                                           { $$ = new WordList($1); }
 |   WORD_LIST WORD                                  { $$ = $1; $$->add($2); }
 |   WORD_LIST COMMAND_SUBSTITUTION                  { $$ = $1; $$->add($2); }
+|   WORD_LIST QUOTE                                 { $$ = $1; $$->add($2); }
 ;
 
 REDIRECTION_LIST:
@@ -157,8 +169,8 @@ REDIRECTION_LIST:
 REDIRECTION:
     '>' WORD                                        { $$ = new Redirection(">", $2); }
 |   '<' WORD                                        { $$ = new Redirection("<", $2); }
-|   NUMBER '>' WORD                                 { $$ = new Redirection($1, ">", $3); }
-|   NUMBER '<' WORD                                 { $$ = new Redirection($1, "<", $3); }
+|   WORD '>' WORD                                   { $$ = new Redirection($1, ">", $3); }
+|   WORD '<' WORD                                   { $$ = new Redirection($1, "<", $3); }
 ;
 
 %%
