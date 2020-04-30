@@ -9,14 +9,13 @@
     }
 %}
 
-%token WORD NUMBER VAR
+%token WORD NUMBER
 %token AND OR
 %token FOR IN IF FI THEN ELSE ELIF WHILE DO DONE
 %token COMMAND_SUBST_OPEN COMMAND_SUBST_CLOSE
 %token ARITHMETIC_EXPR_OPEN ARITHMETIC_COMMAND_OPEN ARITHMETIC_CLOSE
 
 %type<string> WORD NUMBER
-%type<var> VAR
 %type<wordlist> WORD_LIST WORD_RANGE
 %type<list> LIST
 %type<pipeline> PIPELINE
@@ -80,7 +79,6 @@ ARITHMETIC1:
 
 ARITHMETIC_ELEMENT:
     WORD                                            { $$ = $1; }
-|   VAR                                             { $$ = $1; }
 |   COMMAND_SUBSTITUTION                            { $$ = $1; }
 ;
 

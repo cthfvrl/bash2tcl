@@ -18,9 +18,20 @@
 
 %%
 
+'               {
+                    state.push(YY_START);
+                    BEGIN(STR_EXACT);
+                }
+<STR_EXACT>'    {
+                    yylval.string = new String("{" + std::string(yytext, yytext + strlen(yytext) - 1) + "}");
+                    BEGIN(state.top());
+                    state.pop();
+                    return WORD;
+                }
+<STR_EXACT>.|\n yymore();
 <ARITHM>[a-zA-Z_][a-zA-Z0-9_]* {
-                    yylval.var = new Var(yytext);
-                    return VAR;
+                    yylval.string = new String("$" + std::string(yytext));
+                    return WORD;
                 }
 <ARITHM>$[a-zA-Z_][a-zA-Z0-9_]* {
                     yylval.string = new String(yytext);
@@ -109,17 +120,6 @@
                 }
 =               return '=';
 ;[ \t\r\n;]*    return ';';
-'               {
-                    state.push(YY_START);
-                    BEGIN(STR_EXACT);
-                }
-<STR_EXACT>'    {
-                    yylval.string = new String("{" + std::string(yytext, yytext + strlen(yytext) - 1) + "}");
-                    BEGIN(state.top());
-                    state.pop();
-                    return WORD;
-                }
-<STR_EXACT>.|\n yymore();
 \"              {
                     state.push(YY_START);
                     BEGIN(STR);

@@ -17,7 +17,6 @@
 
 struct DATA {
     String* string;
-    Var* var;
     Element* element;
     Condition* condition;
     List* list;
