@@ -9,7 +9,7 @@ While::While(Condition* condition, Element* body)
 void While::print(size_t indent) {
     std::cout << std::string(indent, '\t') << "while {";
     condition->print_condition();
-    std::cout << std::string(indent, '\t') << "} {\n";
+    std::cout << "} {\n";
     body->print(indent + 1);
-    std::cout << std::string(indent, '\t') << "}";
+    std::cout << "}";
 }

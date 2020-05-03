@@ -9,9 +9,9 @@ IfElement::IfElement(Condition* condition, Element* body)
 void IfElement::print(size_t indent) {
     std::cout << '{';
     condition->print_condition();
-    std::cout << std::string(indent, '\t') << "} {\n";
+    std::cout << "} {\n";
     body->print(indent + 1);
-    std::cout << std::string(indent, '\t') << "} ";
+    std::cout << "} ";
 }
 
 If::If() : Compound(), elseBody(nullptr) {
@@ -31,7 +31,7 @@ void If::print(size_t indent) {
     if (elseBody) {
         std::cout << "else {\n";
         elseBody->print(indent + 1);
-        std::cout << std::string(indent, '\t') << "}";
+        std::cout << "}";
     }
 }
 
