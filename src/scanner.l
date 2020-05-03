@@ -136,8 +136,14 @@
 ;[ \t\r\n;]*    return ';';
 \(              return '(';
 \)              return ')';
-[<]             return '<';
->               return '>';
+[0-9]*[<]       {
+                    yylval.string = new String(yytext);
+                    return DESCRIPTOR;
+                }
+[0-9&]*>        {
+                    yylval.string = new String(yytext);
+                    return DESCRIPTOR;
+                }
 &&              return AND;
 \|\|            return OR;
 \|              return '|';

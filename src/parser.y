@@ -9,13 +9,13 @@
     }
 %}
 
-%token WORD
+%token WORD DESCRIPTOR
 %token AND OR
 %token FOR IN IF FI THEN ELSE ELIF WHILE DO DONE
 %token COMMAND_SUBST_OPEN COMMAND_SUBST_CLOSE
 %token ARITHMETIC_EXPR_OPEN ARITHMETIC_COMMAND_OPEN ARITHMETIC_CLOSE
 
-%type<string> WORD
+%type<string> WORD DESCRIPTOR
 %type<wordlist> WORD_LIST WORD_RANGE
 %type<list> LIST
 %type<pipeline> PIPELINE
@@ -167,10 +167,7 @@ REDIRECTION_LIST:
 ;
 
 REDIRECTION:
-    '>' WORD                                        { $$ = new Redirection(">", $2); }
-|   '<' WORD                                        { $$ = new Redirection("<", $2); }
-|   WORD '>' WORD                                   { $$ = new Redirection($1, ">", $3); }
-|   WORD '<' WORD                                   { $$ = new Redirection($1, "<", $3); }
+    DESCRIPTOR WORD                                 { $$ = new Redirection($1, $2); }
 ;
 
 %%

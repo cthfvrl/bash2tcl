@@ -1,18 +1,12 @@
 #include "redirection.hpp"
 #include <iostream>
 
-Redirection::Redirection(const std::string& redirection, String* value)
-    : descriptor(nullptr), redirection(redirection), value(value) {
-}
-
-Redirection::Redirection(String* descriptor, const std::string& redirection, String* value)
-    : descriptor(descriptor), redirection(redirection), value(value) {
+Redirection::Redirection(String* descriptor, String* value)
+    : descriptor(descriptor), value(value) {
 }
 
 void Redirection::print(size_t indent) {
-    if (descriptor)
-        descriptor->print();
-    std::cout << redirection;
+    descriptor->print();
     value->print();
 }
 
