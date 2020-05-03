@@ -48,7 +48,7 @@ PROGRAM:
 LIST:
     COMPOUND_COMMAND                                { $$ = new List($1); }
 |   LIST ';' LIST                                   { $$ = $1; $$->add($3); }
-|   LIST AND LIST
+|   LIST AND LIST                                   { $$ = new List(new If(new IfElement($1, $3))); }
 |   LIST OR LIST
 |   '(' LIST ')'                                    { $$ = new List(new Subshell($2)); $$->setSubshellLevel($2->getSubshellLevel()+1); }
 |   LIST ';'                                        { $$ = $1; }
