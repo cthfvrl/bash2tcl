@@ -3,5 +3,5 @@
 
 class Condition : virtual public Element {
 public:
-    virtual void print_condition(size_t indent = 0);
+    virtual void print_condition(size_t indent = 0, bool reverse = false);
 };

@@ -11,11 +11,11 @@ void List::print(size_t indent) {
     }
 }
 
-void List::print_condition(size_t indent) {
-    elements.front()->print_condition(indent);
+void List::print_condition(size_t indent, bool reverse) {
+    elements.front()->print_condition(indent, reverse);
     for (size_t i = 1; i < elements.size(); ++i) {
         std::cout << '\n';
-        elements[i]->print_condition(indent);
+        elements[i]->print_condition(indent, reverse);
     }
 }
 

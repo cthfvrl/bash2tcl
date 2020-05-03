@@ -28,8 +28,8 @@ void Pipeline::print(size_t indent) {
     std::cout << '}';
 }
 
-void Pipeline::print_condition(size_t indent) {
-    std::cout << std::string(indent, '\t') << "![catch {exec ";
+void Pipeline::print_condition(size_t indent, bool reverse) {
+    std::cout << std::string(indent, '\t') << (reverse ? "" : "!") << "[catch {exec ";
     for (size_t i = 0; i < elements.size() - 1; ++i) {
         elements[i]->print();
         std::cout << "| ";

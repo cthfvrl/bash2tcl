@@ -9,8 +9,8 @@ void ArithmeticCommand::print(size_t indent) {
     std::cout << ")} {error \"\"}";
 }
 
-void ArithmeticCommand::print_condition(size_t indent) {
-    std::cout << std::string(indent, '\t') << '(';
+void ArithmeticCommand::print_condition(size_t indent, bool reverse) {
+    std::cout << std::string(indent, '\t') << (reverse ? "!" : "") << '(';
     for (auto& e : elements)
         e->print();
     std::cout << ')';

@@ -7,9 +7,10 @@
 class IfElement : public Element {
     Condition* condition;
     Element* body;
+    bool reverse;
 
 public:
-    IfElement(Condition*, Element*);
+    IfElement(Condition*, Element*, bool reverse = false);
     void print(size_t indent = 0) override;
 };
 

@@ -2,13 +2,13 @@
 #include <iostream>
 #include <string>
 
-IfElement::IfElement(Condition* condition, Element* body)
-    : condition(condition), body(body) {
+IfElement::IfElement(Condition* condition, Element* body, bool reverse)
+    : condition(condition), body(body), reverse(reverse) {
 }
 
 void IfElement::print(size_t indent) {
     std::cout << '{';
-    condition->print_condition();
+    condition->print_condition(0, reverse);
     std::cout << "} {\n";
     body->print(indent + 1);
     std::cout << "} ";
