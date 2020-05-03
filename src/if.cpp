@@ -34,6 +34,3 @@ void If::print(size_t indent) {
         std::cout << "}";
     }
 }
-
-// TODO tests
-// TODO condition class
