@@ -73,7 +73,7 @@
                     state.push(YY_START);
                     BEGIN(ARITHM);
                     brace_count.push(2);
-                    return ARITHMETIC_COMMAND_OPEN;
+                    return ARITHM_COM_OPEN;
                 }
 <*>$\(\(        {
                     if (YY_START == ARITHM)
@@ -81,7 +81,7 @@
                     state.push(YY_START);
                     BEGIN(ARITHM);
                     brace_count.push(2);
-                    return ARITHMETIC_EXPR_OPEN;
+                    return ARITHM_EXPR_OPEN;
                 }
 <ARITHM>\(      {
                     ++brace_count.top();
@@ -93,7 +93,7 @@
                     if(!brace_count.top()) {
                         BEGIN(state.top());
                         state.pop();
-                        return ARITHMETIC_CLOSE;
+                        return ARITHM_CLOSE;
                     }
                     if (brace_count.top() <= 0) {
                         yyerror("Incorrect bracket sequence");

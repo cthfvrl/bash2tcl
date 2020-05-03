@@ -13,7 +13,7 @@
 %token AND OR
 %token FOR IN IF FI THEN ELSE ELIF WHILE DO DONE
 %token COMMAND_SUBST_OPEN COMMAND_SUBST_CLOSE
-%token ARITHMETIC_EXPR_OPEN ARITHMETIC_COMMAND_OPEN ARITHMETIC_CLOSE
+%token ARITHM_EXPR_OPEN ARITHM_COM_OPEN ARITHM_CLOSE
 
 %type<string> WORD DESCRIPTOR
 %type<wordlist> WORD_LIST WORD_RANGE
@@ -31,7 +31,8 @@
 %type<range> RANGE
 %type<whileclause> WHILE_CLAUSE
 %type<ifclause> IF_CLAUSE ELSE_CLAUSE
-%type<arithmetic> ARITHMETIC ARITHMETIC1
+%type<arithmeticcommand> ARITHMETIC_COM
+%type<arithmeticexpr> ARITHMETIC_EXPR
 %type<quote> QUOTE QUOTE1
 %type<element> ELEMENT
 
@@ -58,7 +59,7 @@ LIST:
 COMPOUND_COMMAND:
     PIPELINE                                        { $$ = $1; }
 |   SIMPLE_COMMAND                                  { $$ = $1; }
-|   ARITHMETIC_COMMAND_OPEN ARITHMETIC              { $$ = $2; }
+|   ARITHM_COM_OPEN ARITHMETIC_COM ARITHM_CLOSE     { $$ = $2; }
 |   FOR_CLAUSE                                      { $$ = $1; }
 |   IF_CLAUSE                                       { $$ = $1; }
 |   WHILE_CLAUSE                                    { $$ = $1; }
@@ -69,13 +70,9 @@ PIPELINE:
 |   PIPELINE '|' PIPELINE_COMMAND                   { $$ = $1; $$->add($3); }
 ;
 
-ARITHMETIC:
-    ARITHMETIC1 ARITHMETIC_CLOSE                    { $$ = $1; }
-;
-
-ARITHMETIC1:
-    ELEMENT                                         { $$ = new Arithmetic($1); }
-|   ARITHMETIC1 ELEMENT                             { $$ = $1; $$->add($2); }
+ARITHMETIC_COM:
+    ELEMENT                                         { $$ = new ArithmeticCommand($1); }
+|   ARITHMETIC_COM ELEMENT                          { $$ = $1; $$->add($2); }
 ;
 
 ELEMENT:
@@ -148,8 +145,13 @@ ASSIGNMENT_LIST:
 ASSIGNMENT:
     WORD '=' WORD                                   { $$ = new Assignment($1, $3); }
 |   WORD '=' QUOTE                                  { $$ = new Assignment($1, $3); }
-|   WORD '=' ARITHMETIC_EXPR_OPEN ARITHMETIC        { $$ = new Assignment($1, new CommandSubstitution($4)); }
+|   WORD '=' ARITHM_EXPR_OPEN ARITHMETIC_EXPR ARITHM_CLOSE { $$ = new Assignment($1, new CommandSubstitution($4)); }
 |   WORD '=' COMMAND_SUBSTITUTION                   { $$ = new Assignment($1, $3); }
+;
+
+ARITHMETIC_EXPR:
+    ELEMENT                                         { $$ = new ArithmeticExpression($1); }
+|   ARITHMETIC_EXPR ELEMENT                         { $$ = $1; $$->add($2); }
 ;
 
 WORD_LIST:

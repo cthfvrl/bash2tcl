@@ -35,6 +35,7 @@ struct DATA {
     Range* range;
     While* whileclause;
     If* ifclause;
-    Arithmetic* arithmetic;
+    ArithmeticCommand* arithmeticcommand;
+    ArithmeticExpression* arithmeticexpr;
 };
 #define YYSTYPE DATA
