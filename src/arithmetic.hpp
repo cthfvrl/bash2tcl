@@ -6,7 +6,7 @@ class ArithmeticCommand : public Compound<>, public Condition {
 public:
     using Compound::Compound;
     void print(size_t indent = 0) override;
-    void print_condition(size_t indent = 0, bool reverse = false) override;
+    void print_condition(size_t indent = 0, bool reverse = false, bool in_body = true) override;
 };
 
 class ArithmeticExpression : public Compound<> {
