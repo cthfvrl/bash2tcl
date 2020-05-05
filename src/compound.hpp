@@ -1,5 +1,6 @@
 #pragma once
 #include "element.hpp"
+#include <string>
 #include <vector>
 
 template <class T = Element>
@@ -17,10 +18,10 @@ public:
         elements.push_back(e);
     }
 
-    void noOutput() override {
-        Element::noOutput();
+    void set_output_file(std::string new_output_file) override {
+        Element::set_output_file(new_output_file);
         for (auto e : elements)
-            e->noOutput();
+            e->set_output_file(new_output_file);
     }
 
     virtual ~Compound() {

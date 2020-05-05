@@ -12,8 +12,10 @@ PipelineCommand::PipelineCommand(WordList* wordlist, RedirectionList* redirectio
 
 void PipelineCommand::print(size_t indent) {
     wordlist->print();
-    if (output)
-        std::cout << " >@stdout 2>@stderr <@stdin ";
+    if (output_file.empty())
+        std::cout << " >@stdout 2>@stderr <@stdin";
+    else
+        std::cout << " >>" << output_file;
     if (redirectionlist)
         redirectionlist->print();
 }

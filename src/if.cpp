@@ -15,7 +15,7 @@ void IfElement::print(size_t indent) {
     std::cout << "\n"
               << std::string(indent + 1, '\t') << "set "
               << Condition::get_rc_str(parent_rc) << " $" << body->get_rc_str();
-    std::cout << "\n} ";
+    std::cout << '\n' << std::string(indent, '\t') << "} ";
 }
 
 void IfElement::set_parent_rc(int new_rc) {
@@ -49,7 +49,7 @@ void If::print(size_t indent) {
     if (elseBody) {
         std::cout << "else {\n";
         elseBody->print(indent + 1);
-        std::cout << "\n}";
+        std::cout << '\n' << std::string(indent, '\t') << '}';
     }
     std::cout << std::string(elements.size() - 1, '}');
 }

@@ -4,8 +4,7 @@
 int Condition::rc_max = 0;
 const std::string Condition::prefix = "___rc";
 
-Condition::Condition() : rc(rc_max) {
-    ++rc_max;
+Condition::Condition() : rc(rc_max++) {
 }
 
 Condition::Condition(int rc) : rc(rc) {
