@@ -2,12 +2,11 @@
 #include "condition.hpp"
 #include "element.hpp"
 
-class While : virtual public Element, public Condition {
+class While : public Condition {
     Condition* condition;
-    Element* body;
+    Condition* body;
 
 public:
-    While(Condition*, Element*);
+    While(Condition*, Condition*);
     void print(size_t indent = 0) override;
-    using Condition::print_condition;
 };

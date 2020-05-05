@@ -11,17 +11,21 @@ void Range::print(size_t indent) {
     std::cout << ']';
 }
 
-For::For(String* variable, Range* range, Element* body)
+For::For(String* variable, Range* range, Condition* body)
     : variable(variable), range(range), body(body) {
 }
 
 void For::print(size_t indent) {
+    reset_rc(indent);
     std::cout << std::string(indent, '\t') << "foreach ";
     variable->print();
     std::cout << ' ';
     range->print();
     std::cout << " {\n";
     body->print(indent + 1);
+    std::cout << "\n"
+              << std::string(indent + 1, '\t') << "set " << get_rc_str() << " $"
+              << body->get_rc_str();
     std::cout << "}";
 }
 

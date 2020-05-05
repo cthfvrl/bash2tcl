@@ -22,7 +22,7 @@ Command::Command(AssignmentList* assignmentlist, WordList* wordlist, Redirection
 }
 
 void Command::print(size_t indent) {
-    std::cout << std::string(indent, '\t');
+    std::cout << std::string(indent, '\t') << "set " << get_rc_str() << " [catch {";
     if (assignmentlist) {
         if (wordlist)
             assignmentlist->print_env();
@@ -33,8 +33,9 @@ void Command::print(size_t indent) {
         std::cout << "exec ";
         wordlist->print();
         if (output)
-            std::cout << " >&@stdout <@stdin";
+            std::cout << " >@stdout 2>@stderr <@stdin";
         if (redirectionlist)
             redirectionlist->print();
     }
+    std::cout << "}]";
 }

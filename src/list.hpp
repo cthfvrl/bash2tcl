@@ -6,9 +6,8 @@ class List : public Compound<Condition>, public Condition {
     int subshellLevel = 0;
 
 public:
-    using Compound<Condition>::Compound;
+    List(Condition*);
     void print(size_t indent = 0) override;
-    void print_condition(size_t indent = 0, bool reverse = false, bool in_body = true) override;
     int getSubshellLevel();
     void setSubshellLevel(int);
     void add(List*);

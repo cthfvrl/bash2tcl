@@ -13,7 +13,7 @@ public:
     Compound(T* e) : elements({e}) {
     }
 
-    void add(T* e) {
+    virtual void add(T* e) {
         elements.push_back(e);
     }
 

@@ -13,12 +13,11 @@ public:
 class For : public Condition {
     String* variable;
     Range* range;
-    Element* body;
+    Condition* body;
 
 public:
-    For(String*, Range*, Element*);
+    For(String*, Range*, Condition*);
     void print(size_t indent = 0) override;
-    using Condition::print_condition;
 };
 
 class Pattern : public Element {

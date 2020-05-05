@@ -9,5 +9,4 @@ class Subshell : public Condition {
 public:
     Subshell(List*);
     void print(size_t indent = 0) override;
-    using Condition::print_condition;
 };

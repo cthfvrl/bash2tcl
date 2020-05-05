@@ -17,5 +17,4 @@ public:
     Command(WordList*, RedirectionList*);
     Command(AssignmentList*, WordList*, RedirectionList*);
     void print(size_t indent = 0) override;
-    using Condition::print_condition;
 };

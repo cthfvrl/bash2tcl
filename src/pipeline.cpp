@@ -13,23 +13,13 @@ PipelineCommand::PipelineCommand(WordList* wordlist, RedirectionList* redirectio
 void PipelineCommand::print(size_t indent) {
     wordlist->print();
     if (output)
-        std::cout << " >&@stdout <@stdin ";
+        std::cout << " >@stdout 2>@stderr <@stdin ";
     if (redirectionlist)
         redirectionlist->print();
 }
 
 void Pipeline::print(size_t indent) {
-    std::cout << std::string(indent, '\t') << "catch {exec ";
-    for (size_t i = 0; i < elements.size() - 1; ++i) {
-        elements[i]->print();
-        std::cout << "| ";
-    }
-    elements.back()->print();
-    std::cout << '}';
-}
-
-void Pipeline::print_condition(size_t indent, bool reverse, bool in_body) {
-    std::cout << std::string(indent, '\t') << (reverse ? "" : "!") << "[catch {exec ";
+    std::cout << std::string(indent, '\t') << "set " << get_rc_str() << "[catch {exec ";
     for (size_t i = 0; i < elements.size() - 1; ++i) {
         elements[i]->print();
         std::cout << "| ";
