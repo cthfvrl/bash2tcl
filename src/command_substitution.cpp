@@ -22,7 +22,7 @@ void CommandSubstitution::print(size_t indent) {
     std::cout << std::string(indent, '\t') << '[';
     std::cout << "file tempfile " << get_fname() << '\n';
     element->print();
-    std::cout << "\nexec cat $" << get_fname() << ']';
+    std::cout << "\nregsub -all {\\n} [exec cat $" << get_fname() << "] \" \"]";
 }
 
 void CommandSubstitution::remove_tempfiles() {

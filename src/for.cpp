@@ -29,6 +29,11 @@ void For::print(size_t indent) {
     std::cout << "}";
 }
 
+void For::set_output_file(std::string new_output_file) {
+    range->set_output_file(new_output_file);
+    body->set_output_file(new_output_file);
+}
+
 Pattern::Pattern(String* s) : pattern(s) {
 }
 

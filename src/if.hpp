@@ -13,6 +13,7 @@ class IfElement : public Element {
 public:
     IfElement(Condition*, Condition*, bool reverse_condition = false);
     void print(size_t indent = 0) override;
+    void set_output_file(std::string) override;
     void set_parent_rc(int);
 };
 
@@ -26,4 +27,5 @@ public:
     void add(IfElement*) override;
     void addElse(Condition*);
     void print(size_t indent = 0) override;
+    void set_output_file(std::string) override;
 };

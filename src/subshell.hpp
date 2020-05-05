@@ -9,4 +9,5 @@ class Subshell : public Condition {
 public:
     Subshell(List*);
     void print(size_t indent = 0) override;
+    void set_output_file(std::string) override;
 };
