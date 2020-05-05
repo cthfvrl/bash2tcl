@@ -27,5 +27,6 @@ void CommandSubstitution::print(size_t indent) {
 
 void CommandSubstitution::remove_tempfiles() {
     for (int i = 0; i < index_max; ++i)
-        std::cout << "file delete $" << get_fname(i) << '\n';
+        std::cout << "if {[info exists " << get_fname(i) << "]} {file delete $"
+                  << get_fname(i) << "}\n";
 }
