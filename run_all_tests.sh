@@ -1,5 +1,8 @@
+all=0
+passed=0
 for file in test/*
 do 
+    all=$((all+1))
     b=`bash $file`
     if ./$1 < $file >& __tmp
     then 
@@ -8,8 +11,10 @@ do
             if [ "$b" == "$t" ]
             then
                 echo $file: ok
+                passed=$((passed+1))
             else
                 echo $file: different output 
+                #diff <(echo "$b") <(echo "$t")
             fi
         else
             echo $file: tclsh error
@@ -20,3 +25,4 @@ do
     fi
     rm __tmp __tmperr
 done
+echo Passed $passed tests out of $all
