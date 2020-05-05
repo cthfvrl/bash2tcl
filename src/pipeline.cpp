@@ -19,7 +19,7 @@ void PipelineCommand::print(size_t indent) {
 }
 
 void Pipeline::print(size_t indent) {
-    std::cout << std::string(indent, '\t') << "set " << get_rc_str() << "[catch {exec ";
+    std::cout << std::string(indent, '\t') << "set " << get_rc_str() << " [catch {exec ";
     for (size_t i = 0; i < elements.size() - 1; ++i) {
         elements[i]->print();
         std::cout << "| ";
