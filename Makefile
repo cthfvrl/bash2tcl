@@ -21,7 +21,7 @@ debug:
 	rm incl.cpp
 
 test:
-	for file in test/*; do echo $$file; ./$(OUT) < $$file; done
+	bash run_all_tests.sh $(OUT)
 
 clean:
 	rm lex.yy.c parser.tab.c parser.tab.h parser.output
