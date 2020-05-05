@@ -22,8 +22,9 @@ void Condition::set_rc(int new_rc) {
     rc = new_rc;
 }
 
-void Condition::reset_rc(size_t indent) {
-    std::cout << std::string(indent, '\t') << "set " << get_rc_str() << " 0\n";
+void Condition::reset_rc(size_t indent, bool reverse) {
+    std::cout << std::string(indent, '\t') << "set " << get_rc_str()
+              << (reverse ? " 1\n" : " 0\n");
 }
 
 std::string Condition::get_rc_str() {

@@ -11,7 +11,7 @@ protected:
     Condition();
     Condition(int);
     void set_rc(int);
-    void reset_rc(size_t indent = 0);
+    void reset_rc(size_t indent = 0, bool reverse = false);
 
 public:
     int get_rc();

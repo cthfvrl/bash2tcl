@@ -22,10 +22,11 @@ void IfElement::set_parent_rc(int new_rc) {
     parent_rc = new_rc;
 }
 
-If::If() : elseBody(nullptr) {
+If::If() : elseBody(nullptr), reverse_default(false) {
 }
 
-If::If(IfElement* e) : Compound<IfElement>(e) {
+If::If(IfElement* e, bool reverse_default)
+    : Compound<IfElement>(e), elseBody(nullptr), reverse_default(reverse_default) {
     e->set_parent_rc(get_rc());
 }
 
@@ -39,7 +40,7 @@ void If::addElse(Condition* e) {
 }
 
 void If::print(size_t indent) {
-    reset_rc(indent);
+    reset_rc(indent, reverse_default);
     elements.back()->print(indent);
     for (int i = elements.size() - 2; i >= 0; --i) {
         std::cout << "else {\n";

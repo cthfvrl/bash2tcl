@@ -18,10 +18,11 @@ public:
 
 class If : public Compound<IfElement>, public Condition {
     Condition* elseBody;
+    bool reverse_default;
 
 public:
     If();
-    If(IfElement*);
+    If(IfElement*, bool reverse_default = false);
     void add(IfElement*) override;
     void addElse(Condition*);
     void print(size_t indent = 0) override;
