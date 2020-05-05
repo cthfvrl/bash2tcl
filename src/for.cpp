@@ -38,9 +38,9 @@ Pattern::Pattern(String* s) : pattern(s) {
 }
 
 void Pattern::print(size_t indent) {
-    std::cout << "[glob ";
+    std::cout << "[lsort [glob ";
     pattern->print();
-    std::cout << "]";
+    std::cout << "]]";
 }
 
 Element* Pattern::check_pattern(String* s) {
