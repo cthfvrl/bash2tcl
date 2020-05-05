@@ -17,5 +17,5 @@ void While::print(size_t indent) {
     std::cout << "\n"
               << std::string(indent + 2, '\t') << "set " << get_rc_str() << " $"
               << body->get_rc_str();
-    std::cout << "} {break} }\n";
+    std::cout << "} {break} }";
 }
