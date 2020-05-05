@@ -10,7 +10,8 @@ void ArithmeticCommand::print(size_t indent) {
 }
 
 void ArithmeticExpression::print(size_t indent) {
-    std::cout << std::string(indent, '\t') << "expr ";
+    std::cout << std::string(indent, '\t') << "[expr ";
     for (auto& e : elements)
         e->print();
+    std::cout << "]";
 }

@@ -33,9 +33,9 @@ void Command::print(size_t indent) {
         std::cout << "exec ";
         wordlist->print();
         if (output_file.empty())
-            std::cout << " >@stdout 2>@stderr <@stdin";
+            std::cout << " >@stdout 2>@stderr <@stdin ";
         else
-            std::cout << " >>" << output_file;
+            std::cout << " >>" << output_file << " 2>@stderr <@stdin ";
         if (redirectionlist)
             redirectionlist->print();
     }

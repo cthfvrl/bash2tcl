@@ -145,7 +145,7 @@ ASSIGNMENT_LIST:
 ASSIGNMENT:
     WORD '=' WORD                                   { $$ = new Assignment($1, $3); }
 |   WORD '=' QUOTE                                  { $$ = new Assignment($1, $3); }
-|   WORD '=' ARITHM_EXPR_OPEN ARITHMETIC_EXPR ARITHM_CLOSE { $$ = new Assignment($1, new CommandSubstitution($4)); }
+|   WORD '=' ARITHM_EXPR_OPEN ARITHMETIC_EXPR ARITHM_CLOSE { $$ = new Assignment($1, $4); }
 |   WORD '=' COMMAND_SUBSTITUTION                   { $$ = new Assignment($1, $3); }
 ;
 
