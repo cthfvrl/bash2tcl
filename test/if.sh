@@ -5,3 +5,10 @@ then
 else
   echo "The variable is equal or less than 10."
 fi
+
+if echo a
+then 
+    echo b
+else 
+    echo c
+fi
