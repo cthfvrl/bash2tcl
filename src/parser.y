@@ -43,7 +43,7 @@
 %%
 
 PROGRAM:
-    LIST                                            { $1->print(); std::cout << '\n'; CommandSubstitution::remove_tempfiles(); delete $1; }
+    LIST                                            { $1->print(); std::cout << '\n'; CommandSubstitution::remove_tempfiles(); }
 ;
 
 LIST:
