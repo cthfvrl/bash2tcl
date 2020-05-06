@@ -1,1 +1,1 @@
-for f in a b `echo c d` g *.c; do echo $f; done
+for f in a b `echo c d` g *.c ?ake*; do echo $f; done
