@@ -9,5 +9,5 @@ class While : public Condition {
 public:
     While(Condition*, Condition*);
     void print(size_t indent = 0) override;
-    void set_output_file(std::string) override;
+    void set_output_file(std::string const&) override;
 };

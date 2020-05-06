@@ -18,7 +18,7 @@ class For : public Condition {
 public:
     For(String*, Range*, Condition*);
     void print(size_t indent = 0) override;
-    void set_output_file(std::string) override;
+    void set_output_file(std::string const&) override;
 };
 
 class Pattern : public Element {

@@ -20,7 +20,7 @@ void While::print(size_t indent) {
     std::cout << "} {break} }";
 }
 
-void While::set_output_file(std::string new_output_file) {
+void While::set_output_file(std::string const& new_output_file) {
     condition->set_output_file(new_output_file);
     body->set_output_file(new_output_file);
 }

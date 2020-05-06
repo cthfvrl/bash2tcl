@@ -18,7 +18,7 @@ public:
         elements.push_back(e);
     }
 
-    void set_output_file(std::string new_output_file) override {
+    void set_output_file(std::string const& new_output_file) override {
         Element::set_output_file(new_output_file);
         for (auto e : elements)
             e->set_output_file(new_output_file);

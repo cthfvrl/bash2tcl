@@ -15,6 +15,6 @@ void Subshell::print(size_t indent) {
     std::cout << std::string(indent, '\t') << "interp delete i" << subshellLevel;
 }
 
-void Subshell::set_output_file(std::string new_output_file) {
+void Subshell::set_output_file(std::string const& new_output_file) {
     list->set_output_file(new_output_file);
 }

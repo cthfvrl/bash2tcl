@@ -18,7 +18,7 @@ void IfElement::print(size_t indent) {
     std::cout << '\n' << std::string(indent, '\t') << "} ";
 }
 
-void IfElement::set_output_file(std::string new_output_file) {
+void IfElement::set_output_file(std::string const& new_output_file) {
     condition->set_output_file(new_output_file);
     body->set_output_file(new_output_file);
 }
@@ -59,7 +59,7 @@ void If::print(size_t indent) {
     std::cout << std::string(elements.size() - 1, '}');
 }
 
-void If::set_output_file(std::string new_output_file) {
+void If::set_output_file(std::string const& new_output_file) {
     Compound<IfElement>::set_output_file(new_output_file);
     elseBody->set_output_file(new_output_file);
 }
