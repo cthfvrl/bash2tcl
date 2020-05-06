@@ -12,8 +12,9 @@ void Redirection::print(size_t indent) {
 
 void RedirectionList::print(size_t indent) {
     std::cout << std::string(indent, '\t');
-    for (auto e : elements) {
+    elements.front()->print();
+    for (size_t i = 1; i < elements.size(); ++i) {
         std::cout << ' ';
-        e->print();
+        elements[i]->print();
     }
 }
